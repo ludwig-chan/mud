@@ -1,4 +1,5 @@
 import './assets/main.css'
+import './assets/tooltip.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -15,5 +16,9 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
 app.component('TimerButton', TimerButton)
+
+// 注册 tooltip 指令
+import tooltip from './directives/tooltip'
+app.directive('tooltip', tooltip)
 
 app.mount('#app')
