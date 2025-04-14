@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { gameLog } from '../utils/eventBus'
 
 export type FruitType = 'apple' | 'banana' | 'watermelon' | 'durian'
 
@@ -37,7 +38,9 @@ export const useResourcesStore = defineStore('resources', {
   actions: {
     async chopWood() {
       this.wood++
-    },    async gatherFruit() {
+      gameLog('成功砍伐了一棵树，获得了一个木材')
+    },
+    async gatherFruit() {
       // 随机选择一种水果
       const fruitTypes = ['apple', 'banana', 'watermelon', 'durian'] as const;
       const randomFruit = fruitTypes[Math.floor(Math.random() * fruitTypes.length)];
@@ -61,8 +64,10 @@ export const useResourcesStore = defineStore('resources', {
         return { success: true, gotSeed };
       }
       return { success: false, gotSeed: false };
-    },async mineOre() {
+    },
+    async mineOre() {
       this.ore++
+      gameLog('成功开采了一块矿石')
     },
     async craftAxe() {
       if (this.wood >= 3 && this.ore >= 2) {

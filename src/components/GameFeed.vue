@@ -1,8 +1,8 @@
 <template>  <section class="game-feed">
-    <h2>日志</h2>
-    <div class="game-messages" ref="messagesContainer">
-      <div v-for="(message, index) in messages" :key="index" class="message">
-        {{ message }}
+    <h2>日志</h2>    <div class="game-messages" ref="messagesContainer">
+      <div v-for="(message, index) in messages" :key="index" class="message" :style="getMessageStyle(message.timestamp)">
+        <span class="timestamp">{{ formatTime(message.timestamp) }}</span>
+        <span class="text">{{ message.text }}</span>
       </div>
     </div>
   </section>
@@ -12,9 +12,15 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { emitter } from '@/utils/eventBus'
 
+interface GameMessage {
+  text: string;
+  timestamp: number;
+}
+
 // 组件状态
-const messages = ref<string[]>([])
+const messages = ref<GameMessage[]>([])
 const messagesContainer = ref<HTMLElement | null>(null)
+const currentTime = ref(Date.now())
 
 // 滚动到底部的方法
 const scrollToBottom = () => {
@@ -25,17 +31,41 @@ const scrollToBottom = () => {
   }
 }
 
+// 更新当前时间
+const updateTimer = setInterval(() => {
+  currentTime.value = Date.now()
+}, 1000)
+
+// 计算消息样式
+const getMessageStyle = (timestamp: number) => {
+  const timeDiff = (currentTime.value - timestamp) / 1000 // 转换为秒
+  return {
+    opacity: timeDiff > 10 ? 0.5 : 1,
+    color: timeDiff > 10 ? '#666' : '#000'
+  }
+}
+
+// 格式化时间
+const formatTime = (timestamp: number) => {
+  const date = new Date(timestamp)
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
+}
+
 // 监听消息
 onMounted(() => {
-  emitter.on('game-message', (message) => {
-    messages.value.push(message)
+  emitter.on('game-message', (message: string) => {
+    messages.value.push({
+      text: message,
+      timestamp: Date.now()
+    })
     scrollToBottom()
   })
 })
 
-// 组件卸载时清理监听器
+// 组件卸载时清理监听器和定时器
 onUnmounted(() => {
   emitter.off('game-message')
+  clearInterval(updateTimer)
 })
 </script>
 
@@ -67,5 +97,20 @@ h2 {
 .message {
   background-color: white;
   border-radius: 4px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.timestamp {
+  color: #666;
+  font-size: 0.9em;
+  min-width: 80px;
+}
+
+.text {
+  flex: 1;
 }
 </style>

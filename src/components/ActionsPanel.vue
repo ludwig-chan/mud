@@ -1,10 +1,9 @@
 <template>
   <section class="actions-panel">
     <h2>可用操作</h2>
-    <div class="action-buttons">
-      <TimerButton :duration="10" @click="resources.chopWood">
-        砍树
-      </TimerButton>      <TimerButton :duration="10" @click="handleGatherFruit">
+    <div class="action-buttons">      <TimerButton :duration="10" @click="resources.chopWood">
+        砍伐
+      </TimerButton><TimerButton :duration="10" @click="handleGatherFruit">
         采集
       </TimerButton>
       <TimerButton :duration="10" @click="resources.mineOre">
@@ -19,6 +18,7 @@
 
 <script setup lang="ts">
 import { useResourcesStore } from '../stores/resources'
+import { gameLog } from '../utils/eventBus'
 
 const resources = useResourcesStore()
 
@@ -32,7 +32,7 @@ const fruitNames = {
 const handleGatherFruit = async () => {
   const result = await resources.gatherFruit()
   const fruitName = fruitNames[result.fruit]
-  alert(`采集到了一个${fruitName}！`)
+  gameLog(`采集到了一个${fruitName}！`)
 }
 
 const handleEatFruit = async (fruitType: 'apple' | 'banana' | 'watermelon' | 'durian') => {
@@ -45,13 +45,13 @@ const handleEatFruit = async (fruitType: 'apple' | 'banana' | 'watermelon' | 'du
     } else {
       message += '！'
     }
-    alert(message)
+    gameLog(message)
   }
 }
 
 const craftAxe = async () => {
   if (!await resources.craftAxe()) {
-    alert('资源不足！需要 3 个木材和 2 个矿石来打造斧头')
+    gameLog('资源不足！需要 3 个木材和 2 个矿石来打造斧头')
   }
 }
 </script>
