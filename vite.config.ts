@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    vueDevTools(),
+    // vueDevTools(), // 临时禁用 vue-devtools
   ],
   base: '/sunrise/',
   resolve: {
