@@ -10,31 +10,21 @@
             <li class="resource-group">
               果实:
               <ul class="sub-resources">
-                <li v-if="resources.fruits.apple" class="resource-item">
-                  <span>苹果: {{ resources.fruits.apple }}</span>
-                  <button @click="handleEatFruit('apple')" class="eat-button">食用</button>
-                </li>
-                <li v-if="resources.fruits.banana" class="resource-item">
-                  <span>香蕉: {{ resources.fruits.banana }}</span>
-                  <button @click="handleEatFruit('banana')" class="eat-button">食用</button>
-                </li>
-                <li v-if="resources.fruits.watermelon" class="resource-item">
-                  <span>西瓜: {{ resources.fruits.watermelon }}</span>
-                  <button @click="handleEatFruit('watermelon')" class="eat-button">食用</button>
-                </li>
-                <li v-if="resources.fruits.durian" class="resource-item">
-                  <span>榴莲: {{ resources.fruits.durian }}</span>
-                  <button @click="handleEatFruit('durian')" class="eat-button">食用</button>
+                <li v-for="fruit in availableFruits" 
+                    :key="fruit.type"
+                    class="resource-item">
+                  <span>{{ fruit.name }}: {{ fruit.count }}</span>
+                  <button @click="handleEatFruit(fruit.type)" class="eat-button">食用</button>
                 </li>
               </ul>
             </li>
             <li class="resource-group">
               种子:
               <ul class="sub-resources">
-                <li v-if="resources.seeds.apple">苹果种子: {{ resources.seeds.apple }}</li>
-                <li v-if="resources.seeds.banana">香蕉种子: {{ resources.seeds.banana }}</li>
-                <li v-if="resources.seeds.watermelon">西瓜种子: {{ resources.seeds.watermelon }}</li>
-                <li v-if="resources.seeds.durian">榴莲种子: {{ resources.seeds.durian }}</li>
+                <li v-for="seed in availableSeeds" 
+                    :key="seed.type">
+                  {{ seed.name }}种子: {{ seed.count }}
+                </li>
               </ul>
             </li>
           </ul>
@@ -61,33 +51,65 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useResourcesStore } from '../stores/resources'
 import { gameLog } from '../utils/eventBus'
 import Tabs from './Tabs.vue'
+import type { FruitType } from '../stores/resources'
 
 const resources = useResourcesStore()
 const activeTab = ref('inventory')
 
-const handleEatFruit = async (fruitType: 'apple' | 'banana' | 'watermelon' | 'durian') => {
+const fruitNames: Record<FruitType, string> = {
+  apple: '苹果',
+  banana: '香蕉',
+  watermelon: '西瓜',
+  durian: '榴莲'
+}
+
+// 计算可用的水果列表
+const availableFruits = computed(() => {
+  const fruits: Array<{ type: FruitType; name: string; count: number }> = []
+  for (const [type, count] of Object.entries(resources.fruits)) {
+    if (count > 0) {
+      fruits.push({
+        type: type as FruitType,
+        name: fruitNames[type as FruitType],
+        count
+      })
+    }
+  }
+  return fruits
+})
+
+// 计算可用的种子列表
+const availableSeeds = computed(() => {
+  const seeds: Array<{ type: FruitType; name: string; count: number }> = []
+  for (const [type, count] of Object.entries(resources.seeds)) {
+    if (count > 0) {
+      seeds.push({
+        type: type as FruitType,
+        name: fruitNames[type as FruitType],
+        count
+      })
+    }
+  }
+  return seeds
+})
+
+const handleEatFruit = async (fruitType: FruitType) => {
   const result = await resources.eatFruit(fruitType)
   if (result.success) {
-    const fruitNames = {
-      apple: '苹果',
-      banana: '香蕉',
-      watermelon: '西瓜',
-      durian: '榴莲'
-    }
-    const fruitName = fruitNames[fruitType]
-    let message = `食用了一个${fruitName}`
+    let message = `食用了一个${fruitNames[fruitType]}`
     if (result.gotSeed) {
-      message += `，并且得到了一颗${fruitName}种子！`
+      message += `，并且得到了一颗${fruitNames[fruitType]}种子！`
     } else {
       message += '！'
     }
     gameLog(message)
   }
 }
+
 const tabs = [
   { key: 'inventory', title: '资源' },
   { key: 'equipment', title: '装备' },

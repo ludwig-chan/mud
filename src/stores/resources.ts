@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 
+export type FruitType = 'apple' | 'banana' | 'watermelon' | 'durian'
+
 interface FruitCount {
   apple: number;
   banana: number;
@@ -46,7 +48,7 @@ export const useResourcesStore = defineStore('resources', {
       return { fruit: randomFruit };
     },
 
-    async eatFruit(fruitType: 'apple' | 'banana' | 'watermelon' | 'durian') {
+    async eatFruit(fruitType: FruitType) {
       if (this.fruits[fruitType] > 0) {
         this.fruits[fruitType]--;
         
