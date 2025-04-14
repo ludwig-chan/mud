@@ -1,8 +1,15 @@
 <template>
   <main class="game-container">
-    <ActionsPanel />
-    <InfoPanel />
-    <GameFeed />
+    <header class="header">
+      <GameDateTime />
+    </header>
+    <div class="middle-section">
+      <ActionsPanel />
+      <InfoPanel />
+    </div>
+    <footer class="footer">
+      <GameFeed />
+    </footer>
   </main>
 </template>
 
@@ -10,30 +17,68 @@
 import ActionsPanel from '@/components/ActionsPanel.vue'
 import InfoPanel from '@/components/InfoPanel.vue'
 import GameFeed from '@/components/GameFeed.vue'
+import GameDateTime from '@/components/GameDateTime.vue'
 </script>
 
 <style scoped>
 .game-container {
-  display: grid;
-  grid-template-columns: 250px 1fr 300px;
-  grid-template-rows: 1fr 200px;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+  width: 100%;
   padding: 1rem;
+  gap: 1rem;
+}
+
+.header {
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+.middle-section {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 1rem;
+  min-height: 0;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.footer {
+  flex: 0 0 200px;
+  width: 100%;
+}
+
+:deep(.game-date-time) {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  border-radius: 4px;
+  width: 100%;
 }
 
 :deep(.actions-panel) {
-  grid-column: 1;
-  grid-row: 1;
+  flex: 0 0 250px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-y: auto;
 }
 
 :deep(.info-panel) {
-  grid-column: 3;
-  grid-row: 1;
+  flex: 0 0 300px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-y: auto;
 }
 
 :deep(.game-feed) {
-  grid-column: 1 / -1;
-  grid-row: 2;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-y: auto;
+  width: 100%;
 }
 </style>
