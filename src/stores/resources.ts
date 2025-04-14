@@ -17,11 +17,21 @@ interface SeedCount {
   durian: number;
 }
 
+interface State {
+  wood: number;
+  ore: number;
+  branch: number;
+  axeDurability: number;
+  fruits: FruitCount;
+  seeds: SeedCount;
+}
+
 export const useResourcesStore = defineStore('resources', {
   state: () => ({
     wood: 0,
     ore: 0,
-    axe: 0,
+    branch: 0,
+    axeDurability: 0,
     fruits: {
       apple: 0,
       banana: 0,
@@ -34,36 +44,63 @@ export const useResourcesStore = defineStore('resources', {
       watermelon: 0,
       durian: 0
     } as SeedCount
-  }),
+  } as State),
+  getters: {
+    axeCount(): number {
+      return this.axeDurability > 0 ? Math.ceil(this.axeDurability / 100) : 0
+    }
+  },
   actions: {
     async chopWood() {
+      if (this.axeDurability <= 0) {
+        gameLog('需要斧头才能砍伐！')
+        return false
+      }
+
+      // 扣除耐久度
+      this.axeDurability -= 5
       this.wood++
       gameLog('成功砍伐了一棵树，获得了一个木材')
-    },
-    async gatherFruit() {
-      // 随机选择一种水果
-      const fruitTypes = ['apple', 'banana', 'watermelon', 'durian'] as const;
-      const randomFruit = fruitTypes[Math.floor(Math.random() * fruitTypes.length)];
       
-      // 增加对应类型的水果数量
-      this.fruits[randomFruit]++;
+      // 检查耐久度是否耗尽
+      if (this.axeDurability <= 0) {
+        gameLog('你的最后一把斧头已经损坏了！')
+      } else {
+        gameLog(`斧头剩余耐久度：${this.axeDurability}`)
+      }
       
-      return { fruit: randomFruit };
+      return true
     },
-
+    async gather() {
+      // 随机决定采集到的物品类型
+      const rand = Math.random()
+      
+      if (rand < 0.4) { // 40% 概率获得果实
+        const fruitTypes = ['apple', 'banana', 'watermelon', 'durian'] as const
+        const randomFruit = fruitTypes[Math.floor(Math.random() * fruitTypes.length)]
+        this.fruits[randomFruit]++
+        return { type: 'fruit', fruit: randomFruit }
+      } else if (rand < 0.7) { // 30% 概率获得树枝
+        this.branch++
+        return { type: 'branch' }
+      } else { // 30% 概率获得矿石
+        this.ore++
+        return { type: 'ore' }
+      }
+    },
     async eatFruit(fruitType: FruitType) {
       if (this.fruits[fruitType] > 0) {
-        this.fruits[fruitType]--;
+        this.fruits[fruitType]--
         
         // 20%概率获得种子
-        const gotSeed = Math.random() < 0.2;
+        const gotSeed = Math.random() < 0.2
         if (gotSeed) {
-          this.seeds[fruitType]++;
+          this.seeds[fruitType]++
         }
         
-        return { success: true, gotSeed };
+        return { success: true, gotSeed }
       }
-      return { success: false, gotSeed: false };
+      return { success: false, gotSeed: false }
     },
     async mineOre() {
       this.ore++
@@ -73,7 +110,8 @@ export const useResourcesStore = defineStore('resources', {
       if (this.wood >= 3 && this.ore >= 2) {
         this.wood -= 3
         this.ore -= 2
-        this.axe++
+        this.axeDurability += 100 // 直接增加耐久度
+        gameLog('成功打造了一把斧头！')
         return true
       }
       return false

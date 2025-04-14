@@ -3,10 +3,10 @@
     <h2>个人信息</h2>
     <Tabs v-model="activeTab" :tabs="tabs">
       <template #inventory>
-        <div class="inventory">
-          <ul class="resources-list">
+        <div class="inventory">          <ul class="resources-list">
             <li>木材: {{ resources.wood }}</li>
             <li>矿石: {{ resources.ore }}</li>
+            <li>树枝: {{ resources.branch }}</li>
             <li class="resource-group">
               果实:
               <ul class="sub-resources">
@@ -33,9 +33,14 @@
       <template #equipment>
         <div class="equipment">
           <ul class="resources-list">
-            <li v-if="resources.axe > 0">
-              斧头: {{ resources.axe }}
-              <span class="equipment-stats">效率加成：+50%</span>
+            <li v-if="resources.axeDurability > 0">
+              斧头
+              <span class="equipment-stats">
+                当前耐久度：{{ resources.axeDurability % 100 || 100 }}/100
+                <template v-if="resources.axeCount > 1">
+                  <br>备用斧头：{{ resources.axeCount - 1 }}把
+                </template>
+              </span>
             </li>
             <li v-else class="empty-equipment">暂无装备</li>
           </ul>

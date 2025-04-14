@@ -1,9 +1,11 @@
 <template>
   <section class="actions-panel">
     <h2>可用操作</h2>
-    <div class="action-buttons">      <TimerButton :duration="10" @click="resources.chopWood">
+    <div class="action-buttons">
+      <TimerButton :duration="10" @click="handleChopWood" v-tooltip="resources.axe <= 0 ? '需要斧头才能砍伐' : ''">
         砍伐
-      </TimerButton><TimerButton :duration="10" @click="handleGatherFruit">
+      </TimerButton>
+      <TimerButton :duration="10" @click="handleGatherFruit">
         采集
       </TimerButton>
       <TimerButton :duration="10" @click="resources.mineOre">
@@ -30,9 +32,21 @@ const fruitNames = {
 }
 
 const handleGatherFruit = async () => {
-  const result = await resources.gatherFruit()
-  const fruitName = fruitNames[result.fruit]
-  gameLog(`采集到了一个${fruitName}！`)
+  const result = await resources.gather()
+  switch (result.type) {
+    case 'fruit':
+      if (result.fruit) {
+        const fruitName = fruitNames[result.fruit]
+        gameLog(`采集到了一个${fruitName}！`)
+      }
+      break
+    case 'branch':
+      gameLog('发现了一根结实的树枝！')
+      break
+    case 'ore':
+      gameLog('在草丛中发现了一块矿石！')
+      break
+  }
 }
 
 const handleEatFruit = async (fruitType: 'apple' | 'banana' | 'watermelon' | 'durian') => {
@@ -47,6 +61,10 @@ const handleEatFruit = async (fruitType: 'apple' | 'banana' | 'watermelon' | 'du
     }
     gameLog(message)
   }
+}
+
+const handleChopWood = async () => {
+  await resources.chopWood()
 }
 
 const craftAxe = async () => {
