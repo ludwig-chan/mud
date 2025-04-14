@@ -7,13 +7,13 @@ export const useResourcesStore = defineStore('resources', {
     ore: 0
   }),
   actions: {
-    chopWood() {
+    async chopWood() {
       this.wood++
     },
-    gatherFruit() {
+    async gatherFruit() {
       this.fruit++
     },
-    mineOre() {
+    async mineOre() {
       this.ore++
     }
   },

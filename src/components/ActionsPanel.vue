@@ -1,10 +1,15 @@
 <template>
   <section class="actions-panel">
     <h2>可用操作</h2>
-    <div class="action-buttons">
-      <button @click="resources.chopWood()">砍树</button>
-      <button @click="resources.gatherFruit()">采集果实</button>
-      <button @click="resources.mineOre()">采矿</button>
+    <div class="action-buttons">      <TimerButton :duration="10" @click="resources.chopWood">
+        砍树
+      </TimerButton>
+      <TimerButton :duration="10" @click="resources.gatherFruit">
+        采集
+      </TimerButton>
+      <TimerButton :duration="10" @click="resources.mineOre">
+        采矿
+      </TimerButton>
     </div>
   </section>
 </template>
@@ -40,5 +45,14 @@ button {
 
 button:hover {
   background-color: #2d3748;
+}
+
+button:disabled {
+  background-color: #718096;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: #718096;
 }
 </style>
