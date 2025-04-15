@@ -1,10 +1,85 @@
 .v-tooltip {
   position: fixed;
-  background-color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 4px 8px;
+  padding: 5px 10px;
   border-radius: 4px;
   font-size: 14px;
   z-index: 9999;
   pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+/* Top positions */
+.v-tooltip-top::after,
+.v-tooltip-top-left::after,
+.v-tooltip-top-right::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  border-width: 5px 5px 0;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.8) transparent transparent;
+}
+
+.v-tooltip-top::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.v-tooltip-top-left::after {
+  left: 10px;
+}
+
+.v-tooltip-top-right::after {
+  right: 10px;
+}
+
+/* Bottom positions */
+.v-tooltip-bottom::after,
+.v-tooltip-bottom-left::after,
+.v-tooltip-bottom-right::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  border-width: 0 5px 5px;
+  border-style: solid;
+  border-color: transparent transparent rgba(0, 0, 0, 0.8);
+}
+
+.v-tooltip-bottom::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.v-tooltip-bottom-left::after {
+  left: 10px;
+}
+
+.v-tooltip-bottom-right::after {
+  right: 10px;
+}
+
+/* Left position */
+.v-tooltip-left::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 5px 0 5px 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent rgba(0, 0, 0, 0.8);
+}
+
+/* Right position */
+.v-tooltip-right::after {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 5px 5px 5px 0;
+  border-style: solid;
+  border-color: transparent rgba(0, 0, 0, 0.8) transparent transparent;
 }

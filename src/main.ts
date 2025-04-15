@@ -17,6 +17,12 @@ app.use(pinia)
 app.use(router)
 app.component('TimerButton', TimerButton)
 
+// 禁用移动端长按菜单
+document.addEventListener('contextmenu', (e) => {
+  e.preventDefault()
+  return false
+})
+
 // 注册 tooltip 指令
 import tooltip from './directives/tooltip'
 app.directive('tooltip', tooltip)
