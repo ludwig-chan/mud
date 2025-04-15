@@ -1,7 +1,7 @@
 <template>
-  <main class="game-container">
-    <header class="header">
+  <main class="game-container">    <header class="header">
       <GameDateTime />
+      <PlayerStatus />
     </header>
     <div class="middle-section">
       <InfoPanel />
@@ -18,6 +18,7 @@ import ActionsPanel from '@/components/ActionsPanel.vue'
 import InfoPanel from '@/components/InfoPanel.vue'
 import GameFeed from '@/components/GameFeed.vue'
 import GameDateTime from '@/components/GameDateTime.vue'
+import PlayerStatus from '@/components/PlayerStatus.vue'
 </script>
 
 <style scoped>

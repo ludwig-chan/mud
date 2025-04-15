@@ -3,16 +3,15 @@
     <h2>个人信息</h2>
     <Tabs v-model="activeTab" :tabs="tabs">
       <template #inventory>
-        <div class="inventory">          <ul class="resources-list">
+        <div class="inventory">
+          <ul class="resources-list">
             <li>木材: {{ resources.wood }}</li>
             <li>矿石: {{ resources.ore }}</li>
             <li>树枝: {{ resources.branch }}</li>
             <li class="resource-group">
               果实:
               <ul class="sub-resources">
-                <li v-for="fruit in availableFruits" 
-                    :key="fruit.type"
-                    class="resource-item">
+                <li v-for="fruit in availableFruits" :key="fruit.type" class="resource-item">
                   <span>{{ fruit.name }}: {{ fruit.count }}</span>
                   <button @click="handleEatFruit(fruit.type)" class="eat-button">食用</button>
                 </li>
@@ -21,8 +20,7 @@
             <li class="resource-group">
               种子:
               <ul class="sub-resources">
-                <li v-for="seed in availableSeeds" 
-                    :key="seed.type">
+                <li v-for="seed in availableSeeds" :key="seed.type">
                   {{ seed.name }}种子: {{ seed.count }}
                 </li>
               </ul>
@@ -44,11 +42,6 @@
             </li>
             <li v-else class="empty-equipment">暂无装备</li>
           </ul>
-        </div>
-      </template>
-      <template #status>
-        <div class="status">
-          <p>暂无状态信息</p>
         </div>
       </template>
     </Tabs>
@@ -117,8 +110,7 @@ const handleEatFruit = async (fruitType: FruitType) => {
 
 const tabs = [
   { key: 'inventory', title: '资源' },
-  { key: 'equipment', title: '装备' },
-  { key: 'status', title: '状态' }
+  { key: 'equipment', title: '装备' }
 ]
 </script>
 
@@ -150,7 +142,8 @@ h3 {
   margin: 0.5rem 0;
   padding: 0.5rem;
   background-color: white;
-  border-radius: 4px;  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .equipment-stats {
