@@ -12,6 +12,9 @@ export default defineConfig({
     vueJsx(),
     // vueDevTools(), // 临时禁用 vue-devtools
   ],
+  server: {
+    port: 5174,
+  },
   base: '/sunrise/',
   resolve: {
     alias: {

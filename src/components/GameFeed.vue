@@ -1,7 +1,8 @@
-<template>  <section class="game-feed">
-    <h2>日志</h2>    <div class="game-messages" ref="messagesContainer">
+<template>
+  <section class="game-feed">
+    <div class="game-messages" ref="messagesContainer">
       <div v-for="(message, index) in messages" :key="index" class="message" :style="getMessageStyle(message.timestamp)">
-        <span class="timestamp">{{ formatTime(message.timestamp) }}</span>
+        <span class="timestamp">{{ formatGameTime(message.gameTimestamp) }}</span>
         <span class="text">{{ message.text }}</span>
       </div>
     </div>
@@ -11,25 +12,20 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { emitter } from '@/utils/eventBus'
+import { useTimeStore, type Season } from '@/stores/time'
+import { seasonNames } from '@/utils/textMapping'
 
 interface GameMessage {
   text: string;
-  timestamp: number;
+  gameTimestamp: number;  // 游戏内时间戳
+  timestamp: number;      // 现实世界时间戳
 }
 
 // 组件状态
 const messages = ref<GameMessage[]>([])
 const messagesContainer = ref<HTMLElement | null>(null)
+const timeStore = useTimeStore()
 const currentTime = ref(Date.now())
-
-// 滚动到底部的方法
-const scrollToBottom = () => {
-  if (messagesContainer.value) {
-    setTimeout(() => {
-      messagesContainer.value!.scrollTop = messagesContainer.value!.scrollHeight
-    }, 0)
-  }
-}
 
 // 更新当前时间
 const updateTimer = setInterval(() => {
@@ -45,10 +41,26 @@ const getMessageStyle = (timestamp: number) => {
   }
 }
 
-// 格式化时间
-const formatTime = (timestamp: number) => {
-  const date = new Date(timestamp)
-  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
+// 滚动到底部的方法
+const scrollToBottom = () => {
+  if (messagesContainer.value) {
+    setTimeout(() => {
+      messagesContainer.value!.scrollTop = messagesContainer.value!.scrollHeight
+    }, 0)
+  }
+}
+
+// 格式化游戏时间
+const formatGameTime = (gameTimestamp: number) => {
+  const year = Math.floor(gameTimestamp / 24 / 30 / 4) + 1
+  const totalDays = Math.floor(gameTimestamp / 24)
+  const day = totalDays % 30 + 1
+  const hour = gameTimestamp % 24
+  const seasonIndex = Math.floor((totalDays % 120) / 30)
+  const seasonTypes: Season[] = ['SPRING', 'SUMMER', 'AUTUMN', 'WINTER']
+  const season = seasonNames[seasonTypes[seasonIndex]]
+  
+  return `第${year}年${season}${day}日${hour}时`
 }
 
 // 监听消息
@@ -56,6 +68,7 @@ onMounted(() => {
   emitter.on('game-message', (message: string) => {
     messages.value.push({
       text: message,
+      gameTimestamp: timeStore.timestamp,
       timestamp: Date.now()
     })
     scrollToBottom()
@@ -107,7 +120,7 @@ h2 {
 .timestamp {
   color: #666;
   font-size: 0.9em;
-  min-width: 80px;
+  min-width: 120px;  /* 增加宽度以适应新的时间格式 */
 }
 
 .text {
