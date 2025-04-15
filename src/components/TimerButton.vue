@@ -4,15 +4,17 @@
     @click="handleClick"
     class="timer-button"
   >
+    <div 
+      v-if="isCountingDown" 
+      class="progress-bar"
+      :style="{ width: `${progressPercentage}%` }"
+    ></div>
     <slot></slot>
-    <div v-if="isCountingDown" class="countdown">
-      {{ remainingTime }}秒
-    </div>
   </button>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps<{
   duration?: number // 用时，单位为秒
@@ -24,6 +26,9 @@ const emit = defineEmits<{
 
 const isCountingDown = ref(false)
 const remainingTime = ref(0)
+const progressPercentage = computed(() => {
+  return ((props.duration! - remainingTime.value) / props.duration!) * 100
+})
 let timer: NodeJS.Timeout | null = null
 
 const handleClick = async () => {
@@ -53,6 +58,7 @@ const handleClick = async () => {
   color: white;
   cursor: pointer;
   transition: background-color 0.2s;
+  overflow: hidden;
 }
 
 .timer-button:hover:not(:disabled) {
@@ -64,12 +70,17 @@ const handleClick = async () => {
   cursor: not-allowed;
 }
 
-.countdown {
+.progress-bar {
   position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.8em;
-  opacity: 0.8;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: width 0.1s linear;
+}
+
+.progress-bar + * {
+  position: relative;
+  z-index: 1;
 }
 </style>

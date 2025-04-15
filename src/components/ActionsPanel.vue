@@ -1,6 +1,5 @@
 <template>
   <section class="actions-panel">
-    <h2>可用操作</h2>
     <div class="action-buttons">
       <TimerButton :duration="10" @click="handleChopWood" v-tooltip="resources.axe <= 0 ? '需要斧头才能砍伐' : ''">
         砍伐

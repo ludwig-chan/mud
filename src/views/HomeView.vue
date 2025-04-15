@@ -4,8 +4,8 @@
       <GameDateTime />
     </header>
     <div class="middle-section">
-      <ActionsPanel />
       <InfoPanel />
+      <ActionsPanel />
     </div>
     <footer class="footer">
       <GameFeed />
@@ -36,49 +36,14 @@ import GameDateTime from '@/components/GameDateTime.vue'
 }
 
 .middle-section {
-  flex: 1 1 auto;
+  height: calc(100vh - 200px - 32px * 2 - 58px);
   display: flex;
-  gap: 1rem;
-  min-height: 0;
-  width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
+  overflow: auto;
 }
 
 .footer {
   flex: 0 0 200px;
   width: 100%;
-}
-
-:deep(.game-date-time) {
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 0.5rem;
-  border-radius: 4px;
-  width: 100%;
-}
-
-:deep(.actions-panel) {
-  flex: 0 0 250px;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-  padding: 1rem;
-  overflow-y: auto;
-}
-
-:deep(.info-panel) {
-  flex: 0 0 300px;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-  padding: 1rem;
-  overflow-y: auto;
-}
-
-:deep(.game-feed) {
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-  padding: 1rem;
-  overflow-y: auto;
-  width: 100%;
+  height: 200px;
 }
 </style>

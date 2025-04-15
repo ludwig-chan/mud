@@ -1,5 +1,12 @@
 import type { DirectiveBinding } from 'vue'
 
+// 扩展 HTMLElement 类型以包含 _tooltip 属性
+declare global {
+  interface HTMLElement {
+    _tooltip?: HTMLElement
+  }
+}
+
 interface TooltipOptions {
   text: string
   position?: 'top' | 'bottom' | 'left' | 'right'
@@ -43,10 +50,14 @@ function positionTooltip(tooltip: HTMLElement, element: HTMLElement, position: s
 }
 
 export default {
-  mounted(el: HTMLElement, binding: DirectiveBinding<TooltipOptions | string>) {
-    const options = typeof binding.value === 'string' 
+  mounted(el: HTMLElement, binding: DirectiveBinding<TooltipOptions | string>) {    const options = typeof binding.value === 'string' 
       ? { text: binding.value } 
       : binding.value
+
+    // 如果文本为空则不创建tooltip
+    if (!options.text?.trim()) {
+      return
+    }
 
     const tooltip = createTooltip(options.text)
     tooltip.style.display = 'none'
