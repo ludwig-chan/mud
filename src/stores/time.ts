@@ -1,31 +1,30 @@
 import { defineStore } from 'pinia'
 
-export type Season = '春季' | '夏季' | '秋季' | '冬季'
-export type Weather = '晴朗' | '下雨' | '刮风' | '下雪' | '冰雹' | '沙尘暴' | '雾霾'
+export type Season = 'SPRING' | 'SUMMER' | 'AUTUMN' | 'WINTER'
+export type Weather = 'SUNNY' | 'RAINY' | 'WINDY' | 'SNOWY' | 'HAIL' | 'SANDSTORM' | 'HAZE'
 
 interface TimeState {
-  timestamp: number; // 游戏内的时间戳
+  timestamp: number; // 游戏内的时间戳，以小时为单位
   weather: Weather;
 }
 
 export const useTimeStore = defineStore('time', {
   state: (): TimeState => ({
     timestamp: 0,
-    weather: '晴朗'
+    weather: 'SUNNY'
   }),
   
   getters: {
     hour: (state) => Math.floor(state.timestamp % 24),
-    day: (state) => Math.floor(state.timestamp / 24),
-    season: (state) => {
-      const seasons = ['春季', '夏季', '秋季', '冬季']
-      return seasons[Math.floor((state.timestamp / 24 / 90) % 4)]
+    day: (state) => Math.floor(state.timestamp / 24) % 30 + 1,
+    season: (state): Season => {
+      const seasons: Season[] = ['SPRING', 'SUMMER', 'AUTUMN', 'WINTER']
+      return seasons[Math.floor((state.timestamp / 24 / 30) % 4)]
     },
-    year: (state) => Math.floor(state.timestamp / 24 / 360) + 1,
+    year: (state) => Math.floor(state.timestamp / 24 / 30 / 4) + 1,
   },
   
   actions: {
-    // 更新天气    
     updateWeather(newWeather: Weather) {
       this.weather = newWeather
     }
