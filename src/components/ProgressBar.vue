@@ -48,13 +48,13 @@ const getTextStyle = (): CSSProperties => {
   // 在垂直模式下，进度条是从下往上增长的，所以渐变的颜色顺序需要反过来
   return {
     background: `linear-gradient(to ${direction}, 
-      ${isVertical ? '#ffffff' : '#000000'} ${percentage}%, 
-      ${isVertical ? '#000000' : '#ffffff'} ${percentage}%
+      ${isVertical ? '#000000' : '#ffffff'} ${isVertical ? 100 - percentage : percentage}%, 
+      ${isVertical ? '#ffffff' : '#000000'} ${isVertical ? 100 - percentage : percentage}%
     )`,
     WebkitBackgroundClip: 'text',
     backgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
-    writingMode: isVertical ? 'vertical-lr' : 'horizontal-tb',
+    writingMode: isVertical ? 'vertical-rl' : 'horizontal-tb',
     textOrientation: isVertical ? 'mixed' : 'initial',
     height: isVertical ? '100%' : 'auto',
     display: 'flex',

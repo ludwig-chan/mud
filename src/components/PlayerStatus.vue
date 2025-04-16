@@ -1,6 +1,6 @@
 <template>
   <div class="player-status">
-    <div class="avatar-section" @click="goToCharacterView">
+    <div class="avatar-section">
       <div class="avatar">
         <!-- 这里可以替换成实际的头像图片 -->
         <div class="avatar-placeholder">
@@ -11,7 +11,8 @@
 
     <div class="basic-info">
       <div class="info-item">{{ age }}岁 · {{ gender }}</div>
-    </div>    <div class="stats-container">
+    </div>    
+    <div class="stats-container" @click="goToCharacterView">
       <div class="health-bar">
         <ProgressBar :value="health" label="健康" direction="vertical" color="rgb(220, 53, 69)" />
       </div>
@@ -21,6 +22,15 @@
         </div>
         <div class="status-item">
           <ProgressBar :value="satiety" label="饱腹" color="rgb(255, 153, 0)" />
+        </div>
+        <div class="status-item">
+          <ProgressBar :value="mood" label="心情" color="rgb(147, 112, 219)" />
+        </div>
+        <div class="status-item">
+          <ProgressBar :value="hygiene" label="清洁" color="rgb(32, 178, 170)" />
+        </div>
+        <div class="status-item">
+          <ProgressBar :value="mana" label="魔力" color="rgb(138, 43, 226)" />
         </div>
       </div>
     </div>
@@ -38,6 +48,9 @@ const router = useRouter()
 const health = ref(55)     // 健康值
 const energy = ref(50)      // 体力值
 const satiety = ref(45)     // 饱腹值
+const mood = ref(60)        // 心情值
+const hygiene = ref(70)     // 清洁度
+const mana = ref(0)         // 魔力值
 const age = ref(18)         // 年龄
 const gender = ref('男')     // 性别
 
@@ -61,22 +74,21 @@ const goToCharacterView = () => {
   display: flex;
   gap: 0;
   align-items: stretch;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.stats-container:hover {
+  transform: scale(1.02);
 }
 
 .health-bar {
-  height: 70px;
   display: flex;
   align-items: center;
 }
 
 .avatar-section {
-  cursor: pointer;
-  transition: transform 0.2s;
   flex-shrink: 0;
-}
-
-.avatar-section:hover {
-  transform: scale(1.05);
 }
 
 .basic-info {
