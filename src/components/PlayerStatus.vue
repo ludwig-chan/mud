@@ -1,76 +1,43 @@
-<template>
-  <div class="player-status">
-    <div class="status-item">
-      <span class="label">体力:</span>
-      <div class="progress-bar">
-        <div 
-          class="progress" 
-          :style="{ width: `${energy}%` }"
-          :class="{ 'low': energy < 30 }"
-        ></div>
+<template>  <div class="player-status">
+      <div class="avatar-section" @click="goToCharacterView">
+        <div class="avatar">
+          <!-- 这里可以替换成实际的头像图片 -->
+          <div class="avatar-placeholder">
+            <span class="material-icons">person</span>
+          </div>
+        </div>
       </div>
-      <span class="value">{{ energy }}/100</span>
-    </div>
 
-    <div class="status-item">
-      <span class="label">饱腹:</span>
-      <div class="progress-bar">
-        <div 
-          class="progress" 
-          :style="{ width: `${satiety}%` }"
-          :class="{ 'low': satiety < 30 }"
-        ></div>
-      </div>
-      <span class="value">{{ satiety }}/100</span>
-    </div>
+      <div class="basic-info">
+        <div class="info-item">{{ age }}岁 · {{ gender }}</div>
+      </div>      <div class="main-stats">
+        <div class="status-item">
+          <ProgressBar :value="energy" label="体力" />
+        </div>
 
-    <div class="status-item">
-      <span class="label">心情:</span>
-      <div class="progress-bar">
-        <div 
-          class="progress" 
-          :style="{ width: `${mood}%` }"
-          :class="{ 'low': mood < 30 }"
-        ></div>
+        <div class="status-item">
+          <ProgressBar :value="satiety" label="饱腹" />
+        </div>
       </div>
-      <span class="value">{{ mood }}/100</span>
-    </div>
-
-    <div class="status-item">
-      <span class="label">清洁:</span>
-      <div class="progress-bar">
-        <div 
-          class="progress" 
-          :style="{ width: `${hygiene}%` }"
-          :class="{ 'low': hygiene < 30 }"
-        ></div>
-      </div>
-      <span class="value">{{ hygiene }}/100</span>
-    </div>
-
-    <div class="status-item">
-      <span class="label">体温:</span>
-      <div class="progress-bar">
-        <div 
-          class="progress" 
-          :style="{ width: `${temperature}%` }"
-          :class="{ 'warning': temperature < 30 || temperature > 70 }"
-        ></div>
-      </div>
-      <span class="value">{{ temperature }}/100</span>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import ProgressBar from './ProgressBar.vue'
+
+const router = useRouter()
 
 // 暂时使用简单的ref，后续可以改用store管理
-const energy = ref(100)      // 体力值
-const satiety = ref(100)     // 饱腹值
-const mood = ref(100)        // 心情值
-const hygiene = ref(100)     // 清洁度
-const temperature = ref(50)  // 体温值，默认50表示适中
+const energy = ref(20)      // 体力值
+const satiety = ref(20)     // 饱腹值
+const age = ref(18)         // 年龄
+const gender = ref('男')     // 性别
+
+const goToCharacterView = () => {
+  router.push('/character')
+}
 </script>
 
 <style scoped>
@@ -78,9 +45,59 @@ const temperature = ref(50)  // 体温值，默认50表示适中
   background-color: #f5f5f5;
   padding: 1rem;
   border-radius: 6px;
+  display: grid;
+  grid-template-columns: auto 1fr 2fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.avatar-section {
+  cursor: pointer;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.avatar-section:hover {
+  transform: scale(1.05);
+}
+
+.basic-info {
+  font-size: 0.9rem;
+  color: #666;
+  padding: 0 0.5rem;
+}
+
+.info-item {
+  white-space: nowrap;
+}
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.material-icons {
+  font-size: 40px;
+  color: #999;
+}
+
+.main-stats {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  flex-grow: 1;
 }
 
 .status-item {
@@ -95,34 +112,5 @@ const temperature = ref(50)  // 体温值，默认50表示适中
   color: #666;
   width: 3em;
   text-align: right;
-}
-
-.progress-bar {
-  flex: 1;
-  height: 8px;
-  background-color: #ddd;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress {
-  height: 100%;
-  background-color: #4CAF50;
-  border-radius: 4px;
-  transition: width 0.3s ease;
-}
-
-.progress.low {
-  background-color: #f44336;
-}
-
-.progress.warning {
-  background-color: #ff9800;
-}
-
-.value {
-  font-size: 0.8rem;
-  color: #666;
-  min-width: 4em;
 }
 </style>
