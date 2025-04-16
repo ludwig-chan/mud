@@ -1,16 +1,14 @@
 <template>
   <div class="player-status">
     <div class="avatar-section">
-      <div class="avatar">
-        <!-- 这里可以替换成实际的头像图片 -->
+      <div class="avatar">        <!-- 使用 emoji 作为默认头像 -->
         <div class="avatar-placeholder">
-          <span class="material-icons">person</span>
+          <span class="emoji">👤</span>
         </div>
       </div>
-    </div>
-
-    <div class="basic-info">
-      <div class="info-item">{{ age }}岁 · {{ gender }}</div>
+    </div>    <div class="basic-info">
+      <div class="info-item name">{{ characterName }}</div>
+      <div class="info-item">{{ age }}岁 · {{ gender === '男' ? '♂' : '♀' }}</div>
     </div>    
     <div class="stats-container" @click="goToCharacterView">
       <div class="health-bar">
@@ -45,6 +43,7 @@ import ProgressBar from './ProgressBar.vue'
 const router = useRouter()
 
 // 暂时使用简单的ref，后续可以改用store管理
+const characterName = ref('无名氏')  // 角色名称
 const health = ref(55)     // 健康值
 const energy = ref(50)      // 体力值
 const satiety = ref(45)     // 饱腹值
@@ -97,6 +96,13 @@ const goToCharacterView = () => {
   padding: 0 0.5rem;
 }
 
+.info-item.name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.2rem;
+}
+
 .info-item {
   white-space: nowrap;
 }
@@ -118,9 +124,9 @@ const goToCharacterView = () => {
   justify-content: center;
 }
 
-.material-icons {
-  font-size: 40px;
-  color: #999;
+.emoji {
+  font-size: 36px;
+  line-height: 1;
 }
 
 .main-stats {
