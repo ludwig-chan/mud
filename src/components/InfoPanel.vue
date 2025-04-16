@@ -1,6 +1,5 @@
 <template>
   <section class="info-panel">
-    <h2>个人信息</h2>
     <Tabs v-model="activeTab" :tabs="tabs">
       <template #inventory>
         <div class="inventory">

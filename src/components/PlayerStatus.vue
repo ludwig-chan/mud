@@ -1,15 +1,16 @@
 <template>
   <div class="player-status">
-    <div class="avatar-section">
-      <div class="avatar">        <!-- 使用 emoji 作为默认头像 -->
+    <div class="avatar-section" @click="goToCharacterView">
+      <div class="avatar"> <!-- 使用 emoji 作为默认头像 -->
         <div class="avatar-placeholder">
           <span class="emoji">👤</span>
         </div>
       </div>
-    </div>    <div class="basic-info">
+    </div>
+    <div class="basic-info" @click="goToCharacterView">
       <div class="info-item name">{{ characterName }}</div>
       <div class="info-item">{{ age }}岁 · {{ gender === '男' ? '♂' : '♀' }}</div>
-    </div>    
+    </div>
     <div class="stats-container" @click="goToCharacterView">
       <div class="health-bar">
         <ProgressBar :value="health" label="健康" direction="vertical" color="rgb(220, 53, 69)" />
@@ -81,6 +82,15 @@ const goToCharacterView = () => {
   transform: scale(1.02);
 }
 
+.avatar-section, .basic-info {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.avatar-section:hover, .basic-info:hover {
+  transform: scale(1.05);
+}
+
 .health-bar {
   display: flex;
   align-items: center;
@@ -138,8 +148,7 @@ const goToCharacterView = () => {
 
 .status-item {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: center;  gap: 0.5rem;
   width: 100%;
 }
 
