@@ -10,29 +10,57 @@
         backgroundColor: getBarColor()
       }"
     ></div>
-    <span class="progress-text">{{ label }}</span>
+    <span 
+      class="progress-text"
+      :style="getTextStyle()"
+    >{{ label }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { CSSProperties } from 'vue'
 
 const props = defineProps<{
   value: number
   max?: number
   label?: string
   direction?: 'horizontal' | 'vertical'
+  color?: string
 }>()
 
 const getBarColor = () => {
-  const warningThreshold = 30
   const percentage = (props.value / (props.max || 100)) * 100
+  const opacity = 0.2 + (percentage / 100) * 0.8
   
-  // 使用颜色深浅来表示状态
-  if (percentage <= warningThreshold) {
-    return 'rgba(76, 175, 80, 0.5)' // 浅色
+  if (props.color) {
+    const [r, g, b] = props.color.match(/\d+/g) || ['76', '175', '80']
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`
   }
-  return 'rgba(76, 175, 80, 1)' // 深色
+  return `rgba(76, 175, 80, ${opacity})`
+}
+
+const getTextStyle = (): CSSProperties => {
+  const percentage = (props.value / (props.max || 100)) * 100
+  const isVertical = props.direction === 'vertical'
+  const direction = isVertical ? 'bottom' : 'right'
+  
+  // 在垂直模式下，进度条是从下往上增长的，所以渐变的颜色顺序需要反过来
+  return {
+    background: `linear-gradient(to ${direction}, 
+      ${isVertical ? '#ffffff' : '#000000'} ${percentage}%, 
+      ${isVertical ? '#000000' : '#ffffff'} ${percentage}%
+    )`,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    writingMode: isVertical ? 'vertical-lr' : 'horizontal-tb',
+    textOrientation: isVertical ? 'mixed' : 'initial',
+    height: isVertical ? '100%' : 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 }
 </script>
 
@@ -41,7 +69,6 @@ const getBarColor = () => {
   flex: 1;
   height: 20px;
   background-color: #ddd;
-  border-radius: 4px;
   overflow: hidden;
   position: relative;
 }
@@ -54,7 +81,6 @@ const getBarColor = () => {
 .progress {
   height: 100%;
   background-color: #4CAF50;
-  border-radius: 4px;
   transition: all 0.3s ease;
   position: absolute;
   left: 0;
@@ -72,7 +98,6 @@ const getBarColor = () => {
 }
 
 .progress-text {
-  color: #333;
   font-size: 0.8rem;
   white-space: nowrap;
   position: absolute;
@@ -86,9 +111,16 @@ const getBarColor = () => {
 }
 
 .vertical .progress-text {
-  writing-mode: vertical-rl;
+  writing-mode: vertical-lr;
   text-orientation: mixed;
-  transform: translate(-50%, -50%) rotate(180deg);
-  height: auto;
+  transform: translate(-50%, -50%) rotate(0deg);
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
 }
 </style>

@@ -1,16 +1,16 @@
 <template>
   <section class="actions-panel">
     <div class="action-buttons">
-      <TimerButton :duration="10" @click="handleChopWood" v-tooltip="resources.axe <= 0 ? '需要斧头才能砍伐' : ''">
+      <TimerButton :duration="5" @click="handleChopWood" v-tooltip="resources.axe <= 0 ? '需要斧头才能砍伐' : ''">
         砍伐
       </TimerButton>
-      <TimerButton :duration="10" @click="handleGatherFruit">
+      <TimerButton :duration="3" @click="handleGatherFruit">
         采集
       </TimerButton>
-      <TimerButton :duration="10" @click="resources.mineOre">
+      <TimerButton :duration="3" @click="resources.mineOre">
         采矿
       </TimerButton>
-      <TimerButton :duration="15" @click="craftAxe" v-tooltip="'需要材料：木材x3 矿石x2'">
+      <TimerButton :duration="10" @click="craftAxe" v-tooltip="'需要材料：木材x3 矿石x2'">
         打造斧头
       </TimerButton>
     </div>

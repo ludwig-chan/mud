@@ -1,24 +1,29 @@
-<template>  <div class="player-status">
-      <div class="avatar-section" @click="goToCharacterView">
-        <div class="avatar">
-          <!-- 这里可以替换成实际的头像图片 -->
-          <div class="avatar-placeholder">
-            <span class="material-icons">person</span>
-          </div>
+<template>
+  <div class="player-status">
+    <div class="avatar-section" @click="goToCharacterView">
+      <div class="avatar">
+        <!-- 这里可以替换成实际的头像图片 -->
+        <div class="avatar-placeholder">
+          <span class="material-icons">person</span>
         </div>
       </div>
+    </div>
 
-      <div class="basic-info">
-        <div class="info-item">{{ age }}岁 · {{ gender }}</div>
-      </div>      <div class="main-stats">
+    <div class="basic-info">
+      <div class="info-item">{{ age }}岁 · {{ gender }}</div>
+    </div>    <div class="stats-container">
+      <div class="health-bar">
+        <ProgressBar :value="health" label="健康" direction="vertical" color="rgb(220, 53, 69)" />
+      </div>
+      <div class="main-stats">
         <div class="status-item">
-          <ProgressBar :value="energy" label="体力" />
+          <ProgressBar :value="energy" label="体力" color="rgb(0, 123, 255)" />
         </div>
-
         <div class="status-item">
-          <ProgressBar :value="satiety" label="饱腹" />
+          <ProgressBar :value="satiety" label="饱腹" color="rgb(255, 153, 0)" />
         </div>
       </div>
+    </div>
   </div>
 </template>
 
@@ -30,8 +35,9 @@ import ProgressBar from './ProgressBar.vue'
 const router = useRouter()
 
 // 暂时使用简单的ref，后续可以改用store管理
-const energy = ref(20)      // 体力值
-const satiety = ref(20)     // 饱腹值
+const health = ref(55)     // 健康值
+const energy = ref(50)      // 体力值
+const satiety = ref(45)     // 饱腹值
 const age = ref(18)         // 年龄
 const gender = ref('男')     // 性别
 
@@ -46,8 +52,20 @@ const goToCharacterView = () => {
   padding: 1rem;
   border-radius: 6px;
   display: grid;
-  grid-template-columns: auto 1fr 2fr;
+  grid-template-columns: auto auto 1fr;
   gap: 1.5rem;
+  align-items: center;
+}
+
+.stats-container {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+}
+
+.health-bar {
+  height: 70px;
+  display: flex;
   align-items: center;
 }
 
@@ -96,7 +114,7 @@ const goToCharacterView = () => {
 .main-stats {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0;
   flex-grow: 1;
 }
 

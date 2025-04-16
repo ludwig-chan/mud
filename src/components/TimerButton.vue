@@ -25,26 +25,27 @@ const emit = defineEmits<{
 }>()
 
 const isCountingDown = ref(false)
-const remainingTime = ref(0)
+const remainingTime = ref(0)  // 存储剩余毫秒数
 const progressPercentage = computed(() => {
-  return ((props.duration! - remainingTime.value) / props.duration!) * 100
+  const durationMs = (props.duration || 0) * 1000
+  return ((durationMs - remainingTime.value) / durationMs) * 100
 })
-let timer: NodeJS.Timeout | null = null
+let timer: number | null = null
 
 const handleClick = async () => {
   if (isCountingDown.value) return
   
   isCountingDown.value = true
-  remainingTime.value = props.duration || 0
+  remainingTime.value = (props.duration || 0) * 1000  // 转换为毫秒
   
   timer = setInterval(() => {
-    remainingTime.value--
+    remainingTime.value -= 100  // 每100毫秒减少100
     if (remainingTime.value <= 0) {
       clearInterval(timer!)
       isCountingDown.value = false
       emit('click')
     }
-  }, 1000)
+  }, 100)  // 更新间隔改为100毫秒
 }
 </script>
 
