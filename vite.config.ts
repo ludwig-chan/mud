@@ -25,7 +25,7 @@ export default defineConfig({
         name: 'sunrise',
         short_name: 'sunrise',
         icons: [{
-          src: '/icons/pwa.png',
+          src: './icons/pwa.png',
           sizes: '256x256',
           type: 'image/png'
         }]
