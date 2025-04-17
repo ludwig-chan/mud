@@ -1,0 +1,15 @@
+{
+  "name": "日出之地",
+  "description": "一个类《饥荒》的 MUD 游戏",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "icons/pwa.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ]
+}
