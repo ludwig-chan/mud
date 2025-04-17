@@ -43,8 +43,8 @@ import PlayerStatus from '@/components/PlayerStatus.vue'
 }
 
 .footer {
-  flex: 0 0 200px;
+  flex: 0 0 150px;
   width: 100%;
-  height: 200px;
+  height: 150px;
 }
 </style>
