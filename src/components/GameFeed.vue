@@ -11,9 +11,14 @@
         <button 
           class="filter-toggle"
           @click="isFilterPanelVisible = !isFilterPanelVisible"
-          :class="{ 'is-active': isFilterPanelVisible }"
+          :class="{ 'is-active': isFilterPanelVisible }">🏷️
+        </button>
+        <button 
+          class="clear-messages-btn"
+          @click="clearMessages"
+          title="清空所有消息"
         >
-          <span class="arrow-icon">▼</span>
+          🗑️
         </button>
       </div>
       <div class="filter-panel" v-show="isFilterPanelVisible">
@@ -28,7 +33,10 @@
       </div>
     </div>
     <div class="game-messages" ref="messagesContainer">
-      <template v-for="(message, index) in filteredMessages" :key="index">
+      <div v-if="filteredMessages.length === 0" class="empty-state">
+        <p>暂无消息</p>
+      </div>
+      <template v-else v-for="(message, index) in filteredMessages" :key="index">
         <!-- 日期分割线 -->
         <div v-if="shouldShowDateDivider(message, messages[index - 1])" class="date-divider">
           {{ formatDateDivider(message.gameTimestamp) }}
@@ -50,6 +58,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { emitter } from '@/utils/eventBus'
 import { useTimeStore, type Season } from '@/stores/time'
 import { seasonNames, type MessageType, messageTypeNames } from '@/utils/textMapping'
+import { confirm } from '@/utils/dialog'
 
 interface GameMessage {
   text: string;
@@ -63,6 +72,14 @@ const messages = ref<GameMessage[]>([])
 const messagesContainer = ref<HTMLElement | null>(null)
 const timeStore = useTimeStore()
 const currentTime = ref(Date.now())
+
+// 清空所有消息
+const clearMessages = async () => {
+  const confirmed = await confirm('确定要清空所有消息吗？')
+  if (confirmed) {
+    messages.value = []
+  }
+}
 
 // 搜索和筛选状态
 const searchText = ref('')
@@ -134,7 +151,6 @@ const formatDateDivider = (gameTimestamp: number) => {
 }
 
 // 格式化简单时间（只显示时）
-// 格式化简单时间（只显示时）
 const formatSimpleTime = (gameTimestamp: number) => {
   const hour = gameTimestamp % 24
   return `${hour}时`
@@ -159,30 +175,34 @@ const toggleFilter = (type: MessageType) => {
   }
 };
 
-// 监听消息
-onMounted(() => {  emitter.on('game-message', (data: string | { text: string, type: MessageType }) => {
-    const messageData = typeof data === 'string' 
-      ? { text: data, type: 'SYSTEM' as MessageType } 
-      : data;
-    messages.value.push({
-      text: messageData.text,
-      type: messageData.type,
-      gameTimestamp: timeStore.timestamp,
-      timestamp: Date.now()
-    });
-    // 限制最多保留100条消息
-    if (messages.value.length > 100) {
-      messages.value = messages.value.slice(-100)
-    }
-    scrollToBottom()
+const init = () => {
+  // 监听消息
+  onMounted(() => {  emitter.on('game-message', (data: string | { text: string, type: MessageType }) => {
+      const messageData = typeof data === 'string' 
+        ? { text: data, type: 'SYSTEM' as MessageType } 
+        : data;
+      messages.value.push({
+        text: messageData.text,
+        type: messageData.type,
+        gameTimestamp: timeStore.timestamp,
+        timestamp: Date.now()
+      });
+      // 限制最多保留100条消息
+      if (messages.value.length > 100) {
+        messages.value = messages.value.slice(-100)
+      }
+      scrollToBottom()
+    })
   })
-})
+}
 
 // 组件卸载时清理监听器和定时器
 onUnmounted(() => {
   emitter.off('game-message')
   clearInterval(updateTimer)
 })
+
+init()
 </script>
 
 <style scoped>
@@ -214,8 +234,10 @@ onUnmounted(() => {
   font-size: 0.9em;
 }
 
-.filter-toggle {
-  padding: 0.5rem;
+.filter-toggle, .clear-messages-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
   background: white;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -223,16 +245,16 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 1.2em;  /* 调整emoji大小 */
 }
 
-.filter-toggle .arrow-icon {
-  transition: transform 0.3s ease;
-  display: block;
-  font-size: 0.8em;
+.filter-toggle:hover {
+  background-color: #f0f0f0;
 }
 
-.filter-toggle.is-active .arrow-icon {
-  transform: rotate(180deg);
+.clear-messages-btn:hover {
+  background-color: #fee2e2;
 }
 
 .filter-panel {
@@ -322,5 +344,21 @@ h2 {
   background-color: #4a5568;
   color: white;
   border-color: #4a5568;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #666;
+  font-size: 1.1em;
+}
+
+.empty-state p {
+  background-color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  border: 1px dashed #ccc;
 }
 </style>
