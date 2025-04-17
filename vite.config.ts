@@ -61,7 +61,9 @@ export default defineConfig({
   server: {
     port: 5174,
   },
-  base: './',
+  base: process.env.NODE_ENV === 'production' 
+    ? '/sunrise/' // 生产环境使用绝对路径
+    : '/', // 开发环境使用根路径
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
