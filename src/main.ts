@@ -26,6 +26,13 @@ document.addEventListener('contextmenu', (e) => {
   return false
 })
 
+// 禁用移动端下拉刷新
+document.addEventListener('touchmove', (e) => {
+  if (document.documentElement.scrollTop === 0) {
+    e.preventDefault()
+  }
+}, { passive: false })
+
 // 注册 tooltip 指令
 import tooltip from './directives/tooltip'
 app.directive('tooltip', tooltip)
