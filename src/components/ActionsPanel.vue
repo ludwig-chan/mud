@@ -36,14 +36,14 @@ const handleGatherFruit = async () => {
     case 'fruit':
       if (result.fruit) {
         const fruitName = fruitNames[result.fruit]
-        gameLog(`采集到了一个${fruitName}！`)
+        gameLog({ text: `采集到了一个${fruitName}！`, type: 'ITEM' })
       }
       break
     case 'branch':
-      gameLog('发现了一根结实的树枝！')
+      gameLog({ text: '发现了一根结实的树枝！', type: 'ITEM' })
       break
     case 'ore':
-      gameLog('在草丛中发现了一块矿石！')
+      gameLog({ text: '在草丛中发现了一块矿石！', type: 'ITEM' })
       break
   }
 }
@@ -58,7 +58,7 @@ const handleEatFruit = async (fruitType: 'apple' | 'banana' | 'watermelon' | 'du
     } else {
       message += '！'
     }
-    gameLog(message)
+    gameLog({ text: message, type: 'ACTION' })
   }
 }
 
@@ -68,7 +68,7 @@ const handleChopWood = async () => {
 
 const craftAxe = async () => {
   if (!await resources.craftAxe()) {
-    gameLog('资源不足！需要 3 个木材和 2 个矿石来打造斧头')
+    gameLog({ text: '资源不足！需要 3 个木材和 2 个矿石来打造斧头', type: 'SYSTEM' })
   }
 }
 </script>

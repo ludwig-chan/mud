@@ -49,9 +49,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { emitter } from '@/utils/eventBus'
 import { useTimeStore, type Season } from '@/stores/time'
-import { seasonNames } from '@/utils/textMapping'
-
-type MessageType = 'SYSTEM' | 'COMBAT' | 'DIALOGUE' | 'ACTION' | 'ITEM';
+import { seasonNames, type MessageType, messageTypeNames } from '@/utils/textMapping'
 
 interface GameMessage {
   text: string;
@@ -142,15 +140,8 @@ const formatSimpleTime = (gameTimestamp: number) => {
   return `${hour}时`
 }
 
-// 消息类型和名称映射
+// 定义所有可用的消息类型
 const messageTypes: MessageType[] = ['SYSTEM', 'COMBAT', 'DIALOGUE', 'ACTION', 'ITEM'];
-const messageTypeNames: Record<MessageType, string> = {
-  SYSTEM: '系统',
-  COMBAT: '战斗',
-  DIALOGUE: '对话',
-  ACTION: '行动',
-  ITEM: '物品'
-};
 
 // 筛选状态
 const selectedTypes = ref<MessageType[]>([...messageTypes]);

@@ -53,20 +53,20 @@ export const useResourcesStore = defineStore('resources', {
   actions: {
     async chopWood() {
       if (this.axeDurability <= 0) {
-        gameLog('需要斧头才能砍伐！')
+        gameLog({ text: '需要斧头才能砍伐！', type: 'SYSTEM' })
         return false
       }
 
       // 扣除耐久度
       this.axeDurability -= 5
       this.wood++
-      gameLog('成功砍伐了一棵树，获得了一个木材')
+      gameLog({ text: '成功砍伐了一棵树，获得了一个木材', type: 'ACTION' })
       
       // 检查耐久度是否耗尽
       if (this.axeDurability <= 0) {
-        gameLog('你的最后一把斧头已经损坏了！')
+        gameLog({ text: '你的最后一把斧头已经损坏了！', type: 'SYSTEM' })
       } else {
-        gameLog(`斧头剩余耐久度：${this.axeDurability}`)
+        gameLog({ text: `斧头剩余耐久度：${this.axeDurability}`, type: 'SYSTEM' })
       }
       
       return true
@@ -104,14 +104,14 @@ export const useResourcesStore = defineStore('resources', {
     },
     async mineOre() {
       this.ore++
-      gameLog('成功开采了一块矿石')
+      gameLog({ text: '成功开采了一块矿石', type: 'ITEM' })
     },
     async craftAxe() {
       if (this.wood >= 3 && this.ore >= 2) {
         this.wood -= 3
         this.ore -= 2
         this.axeDurability += 100 // 直接增加耐久度
-        gameLog('成功打造了一把斧头！')
+        gameLog({ text: '成功打造了一把斧头！', type: 'ITEM' })
         return true
       }
       return false

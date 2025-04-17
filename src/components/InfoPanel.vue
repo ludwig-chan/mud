@@ -103,7 +103,7 @@ const handleEatFruit = async (fruitType: FruitType) => {
     } else {
       message += '！'
     }
-    gameLog(message)
+    gameLog({ text: message, type: 'ACTION' })
   }
 }
 

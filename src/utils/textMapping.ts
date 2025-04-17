@@ -1,5 +1,8 @@
 import { type Season, type Weather } from '../stores/time'
 
+// 定义消息类型
+export type MessageType = 'SYSTEM' | 'COMBAT' | 'DIALOGUE' | 'ACTION' | 'ITEM'
+
 // 定义时段枚举类型
 export type DayPeriod = 'DAWN' | 'DAY' | 'DUSK' | 'NIGHT'
 
@@ -28,4 +31,13 @@ export const weatherNames: Record<Weather, string> = {
   'HAIL': '冰雹',
   'SANDSTORM': '沙尘暴',
   'HAZE': '雾霾'
+}
+
+// 消息类型名称映射
+export const messageTypeNames: Record<MessageType, string> = {
+  'SYSTEM': '系统',
+  'COMBAT': '战斗',
+  'DIALOGUE': '对话',
+  'ACTION': '行动',
+  'ITEM': '物品'
 }
