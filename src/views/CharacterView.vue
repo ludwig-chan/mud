@@ -3,10 +3,9 @@
     <h1>人物信息</h1>
     
     <div class="character-profile">
-      <!-- 头像部分 -->
-      <div class="profile-avatar">
+      <!-- 头像部分 -->      <div class="profile-avatar">
         <div class="avatar">
-          <span class="emoji">👤</span>
+          <span class="emoji">{{ character.avatar }}</span>
         </div>
       </div>
 
@@ -14,15 +13,14 @@
       <div class="basic-info">
         <div class="info-group">
           <label>姓名：</label>
-          <span>{{ characterName }}</span>
+          <span>{{ character.name }}</span>
         </div>
         <div class="info-group">
           <label>年龄：</label>
-          <span>{{ age }}岁</span>
+          <span>{{ character.age }}岁</span>
         </div>
-        <div class="info-group">
-          <label>性别：</label>
-          <span>{{ gender }}</span>
+        <div class="info-group">          <label>性别：</label>
+          <span>{{ character.gender === 'male' ? '男' : '女' }}</span>
         </div>
       </div>
 
@@ -32,33 +30,33 @@
         <div class="status-grid">
           <div class="status-item">
             <label>健康值：</label>
-            <ProgressBar :value="health" color="rgb(220, 53, 69)" />
-            <span>{{ health }}%</span>
+            <ProgressBar :value="character.health" color="rgb(220, 53, 69)" />
+            <span>{{ character.health }}%</span>
           </div>
           <div class="status-item">
             <label>体力值：</label>
-            <ProgressBar :value="energy" color="rgb(0, 123, 255)" />
-            <span>{{ energy }}%</span>
+            <ProgressBar :value="character.energy" color="rgb(0, 123, 255)" />
+            <span>{{ character.energy }}%</span>
           </div>
           <div class="status-item">
             <label>饱腹值：</label>
-            <ProgressBar :value="satiety" color="rgb(255, 153, 0)" />
-            <span>{{ satiety }}%</span>
+            <ProgressBar :value="character.satiety" color="rgb(255, 153, 0)" />
+            <span>{{ character.satiety }}%</span>
           </div>
           <div class="status-item">
             <label>心情值：</label>
-            <ProgressBar :value="mood" color="rgb(147, 112, 219)" />
-            <span>{{ mood }}%</span>
+            <ProgressBar :value="character.mood" color="rgb(147, 112, 219)" />
+            <span>{{ character.mood }}%</span>
           </div>
           <div class="status-item">
             <label>清洁度：</label>
-            <ProgressBar :value="hygiene" color="rgb(32, 178, 170)" />
-            <span>{{ hygiene }}%</span>
+            <ProgressBar :value="character.hygiene" color="rgb(32, 178, 170)" />
+            <span>{{ character.hygiene }}%</span>
           </div>
           <div class="status-item">
             <label>魔力值：</label>
-            <ProgressBar :value="mana" color="rgb(138, 43, 226)" />
-            <span>{{ mana }}%</span>
+            <ProgressBar :value="character.mana" color="rgb(138, 43, 226)" />
+            <span>{{ character.mana }}%</span>
           </div>
         </div>
       </div>
@@ -67,19 +65,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import ProgressBar from '../components/ProgressBar.vue'
+import { useCharacterStore } from '../stores/character'
 
-// 暂时使用简单的ref，后续可以改用store管理
-const characterName = ref('无名氏')
-const health = ref(55)
-const energy = ref(50)
-const satiety = ref(45)
-const mood = ref(60)
-const hygiene = ref(70)
-const mana = ref(0)
-const age = ref(18)
-const gender = ref('男')
+const character = useCharacterStore()
 </script>
 
 <style scoped>

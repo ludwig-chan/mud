@@ -1,35 +1,33 @@
 <template>
   <div class="player-status">
-    <div class="avatar-section" @click="goToCharacterView">
-      <div class="avatar"> <!-- 使用 emoji 作为默认头像 -->
+    <div class="avatar-section" @click="goToCharacterView">      <div class="avatar">
         <div class="avatar-placeholder">
-          <span class="emoji">👤</span>
+          <span class="emoji">{{ character.avatar }}</span>
         </div>
       </div>
     </div>
-    <div class="basic-info" @click="goToCharacterView">
-      <div class="info-item name">{{ characterName }}</div>
-      <div class="info-item">{{ age }}岁 · {{ gender === '男' ? '♂' : '♀' }}</div>
+    <div class="basic-info" @click="goToCharacterView">      <div class="info-item name">{{ character.name }}</div>
+      <div class="info-item">{{ character.age }}岁 · {{ character.gender === 'male' ? '♂' : '♀' }}</div>
     </div>
     <div class="stats-container" @click="goToCharacterView">
       <div class="health-bar">
-        <ProgressBar :value="health" label="健康" direction="vertical" color="rgb(220, 53, 69)" />
+        <ProgressBar :value="character.health" label="健康" direction="vertical" color="rgb(220, 53, 69)" />
       </div>
       <div class="main-stats">
         <div class="status-item">
-          <ProgressBar :value="energy" label="体力" color="rgb(0, 123, 255)" />
+          <ProgressBar :value="character.energy" label="体力" color="rgb(0, 123, 255)" />
         </div>
         <div class="status-item">
-          <ProgressBar :value="satiety" label="饱腹" color="rgb(255, 153, 0)" />
+          <ProgressBar :value="character.satiety" label="饱腹" color="rgb(255, 153, 0)" />
         </div>
         <div class="status-item">
-          <ProgressBar :value="mood" label="心情" color="rgb(147, 112, 219)" />
+          <ProgressBar :value="character.mood" label="心情" color="rgb(147, 112, 219)" />
         </div>
         <div class="status-item">
-          <ProgressBar :value="hygiene" label="清洁" color="rgb(32, 178, 170)" />
+          <ProgressBar :value="character.hygiene" label="清洁" color="rgb(32, 178, 170)" />
         </div>
         <div class="status-item">
-          <ProgressBar :value="mana" label="魔力" color="rgb(138, 43, 226)" />
+          <ProgressBar :value="character.mana" label="魔力" color="rgb(138, 43, 226)" />
         </div>
       </div>
     </div>
@@ -37,22 +35,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useCharacterStore } from '../stores/character'
 import ProgressBar from './ProgressBar.vue'
 
 const router = useRouter()
-
-// 暂时使用简单的ref，后续可以改用store管理
-const characterName = ref('无名氏')  // 角色名称
-const health = ref(55)     // 健康值
-const energy = ref(50)      // 体力值
-const satiety = ref(45)     // 饱腹值
-const mood = ref(60)        // 心情值
-const hygiene = ref(70)     // 清洁度
-const mana = ref(0)         // 魔力值
-const age = ref(18)         // 年龄
-const gender = ref('男')     // 性别
+const character = useCharacterStore()
 
 const goToCharacterView = () => {
   router.push('/character')

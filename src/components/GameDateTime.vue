@@ -24,6 +24,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useTimeStore, type Season, type Weather } from '../stores/time'
 import { type DayPeriod, seasonNames, weatherNames, periodNames } from '../utils/textMapping'
+import { gameLog } from '../utils/eventBus'
 
 const timeStore = useTimeStore()
 
@@ -164,7 +165,25 @@ onMounted(() => {
     // 20%的概率改变天气
     if (Math.random() < 0.2) {
       const newWeather = generateWeather(timeStore.season as Season)
-      timeStore.updateWeather(newWeather)
+      const oldWeather = timeStore.weather
+      // 只有在天气真的发生变化时才发送消息      if (newWeather !== oldWeather) {
+        timeStore.updateWeather(newWeather)
+        // 根据新天气生成简洁的提示
+        let weatherMessage = ''
+        switch (newWeather) {
+          case 'SUNNY': weatherMessage = '天晴了'; break
+          case 'RAINY': weatherMessage = '下雨了'; break
+          case 'WINDY': weatherMessage = '起风了'; break
+          case 'SNOWY': weatherMessage = '下雪了'; break
+          case 'HAIL': weatherMessage = '下冰雹了'; break
+          case 'SANDSTORM': weatherMessage = '沙尘暴来了'; break
+          case 'HAZE': weatherMessage = '起雾了'; break
+        }
+        gameLog({
+          text: weatherMessage,
+          type: 'SYSTEM'
+        })
+      }
     }
   }, 10000) // 改为10秒
 })
