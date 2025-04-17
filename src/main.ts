@@ -1,23 +1,22 @@
 import './assets/main.css'
 import './assets/tooltip.css'
 
+// 注册 Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('ServiceWorker 注册成功:', registration.scope)
+      })
+      .catch(error => {
+        console.log('ServiceWorker 注册失败:', error)
+      })
+  })
+}
+
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import { registerSW } from 'virtual:pwa-register'
-
-// 注册 Service Worker
-const updateSW = registerSW({
-  onNeedRefresh() {
-    // 当有新内容时触发
-    if (confirm('发现新版本，是否更新？')) {
-      updateSW()
-    }
-  },
-  onOfflineReady() {
-    console.log('应用已支持离线使用')
-  },
-})
 
 import App from './App.vue'
 import router from './router'
