@@ -4,6 +4,20 @@ import './assets/tooltip.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import { registerSW } from 'virtual:pwa-register'
+
+// 注册 Service Worker
+const updateSW = registerSW({
+  onNeedRefresh() {
+    // 当有新内容时触发
+    if (confirm('发现新版本，是否更新？')) {
+      updateSW()
+    }
+  },
+  onOfflineReady() {
+    console.log('应用已支持离线使用')
+  },
+})
 
 import App from './App.vue'
 import router from './router'
