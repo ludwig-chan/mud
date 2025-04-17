@@ -61,7 +61,7 @@ export default defineConfig({
   server: {
     port: 5174,
   },
-  base: '/sunrise/',
+  base: './',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
