@@ -56,30 +56,58 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { emitter } from '@/utils/eventBus'
-import { useTimeStore, type Season } from '@/stores/time'
+import { useTimeStore } from '@/stores/time'
 import { seasonNames, type MessageType, messageTypeNames } from '@/utils/textMapping'
-import { confirm } from '@/utils/dialog'
+import type { Season } from '@/stores/time'
+import type { GameMessage } from '@/utils/eventBus'
 
-interface GameMessage {
-  text: string;
-  gameTimestamp: number;  // 游戏内时间戳
-  timestamp: number;      // 现实世界时间戳
-  type: MessageType;      // 消息类型
+interface GameMessageWithTimestamp extends GameMessage {
+  gameTimestamp: number;
+  timestamp: number;
 }
 
 // 组件状态
-const messages = ref<GameMessage[]>([])
+const messages = ref<GameMessageWithTimestamp[]>([])
 const messagesContainer = ref<HTMLElement | null>(null)
 const timeStore = useTimeStore()
 const currentTime = ref(Date.now())
 
 // 清空所有消息
-const clearMessages = async () => {
-  const confirmed = await confirm('确定要清空所有消息吗？')
-  if (confirmed) {
-    messages.value = []
-  }
+const clearMessages = () => {
+  messages.value = []
 }
+
+onMounted(() => {
+  // 监听游戏消息
+  emitter.on('game-message', message => {
+    // 添加时间戳
+    const gameMessage = typeof message === 'string' 
+      ? { text: message, type: 'SYSTEM' as MessageType }
+      : message
+
+    messages.value.push({
+      ...gameMessage,
+      gameTimestamp: timeStore.timestamp,
+      timestamp: Date.now()
+    })
+
+    // 限制最多保留100条消息
+    if (messages.value.length > 100) {
+      messages.value = messages.value.slice(-100)
+    }
+    scrollToBottom()
+  })
+
+  // 监听清空消息事件
+  emitter.on('clear-messages', () => {
+    clearMessages()
+  })
+})
+
+onUnmounted(() => {
+  emitter.off('game-message')
+  emitter.off('clear-messages')
+})
 
 // 搜索和筛选状态
 const searchText = ref('')
@@ -132,7 +160,7 @@ const formatGameTime = (gameTimestamp: number) => {
 }
 
 // 判断是否需要显示日期分割线
-const shouldShowDateDivider = (current: GameMessage, previous: GameMessage | undefined) => {
+const shouldShowDateDivider = (current: GameMessageWithTimestamp, previous: GameMessageWithTimestamp | undefined) => {
   if (!previous) return true
   const currentDay = Math.floor(current.gameTimestamp / 24)
   const previousDay = Math.floor(previous.gameTimestamp / 24)
@@ -150,6 +178,7 @@ const formatDateDivider = (gameTimestamp: number) => {
   return `第${year}年 ${season} ${day}日`
 }
 
+// 格式化简单时间（只显示时）
 // 格式化简单时间（只显示时）
 const formatSimpleTime = (gameTimestamp: number) => {
   const hour = gameTimestamp % 24

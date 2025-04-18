@@ -9,6 +9,7 @@ export type GameMessage = {
 export type Events = {
   'game-message': string | GameMessage;
   'hour-passed': void;  // 每小时触发的事件
+  'clear-messages': void;  // 清空消息事件
 }
 
 export const emitter = mitt<Events>()
@@ -20,4 +21,9 @@ export const gameLog = (message: string | GameMessage) => {
   } else {
     emitter.emit('game-message', message)
   }
+}
+
+// 清空消息方法
+export const clearGameLog = () => {
+  emitter.emit('clear-messages')
 }

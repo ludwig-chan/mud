@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
-import { gameLog } from '../utils/eventBus'
+import { gameLog, emitter } from '../utils/eventBus'
+import { showDialog } from '../utils/dialog'
+import { useTimeStore } from './time'
+import { useResourcesStore } from './resources'
 
 type Gender = 'male' | 'female'
 
@@ -22,9 +25,9 @@ export const useCharacterStore = defineStore('character', {
     avatar: '👤',
     age: 18,
     gender: 'male',
-    health: 100,  // 初始值设为100
+    health: 5,
     energy: 100,
-    satiety: 100, // 初始值设为100
+    satiety: 5,
     mood: 100,
     hygiene: 100,
     mana: 0
@@ -42,7 +45,7 @@ export const useCharacterStore = defineStore('character', {
     },
     
     // 处理每小时状态变化
-    hourlyUpdate() {
+    async hourlyUpdate() {
       // 降低饱食度
       if (this.satiety > 0) {
         this.satiety = Math.max(0, this.satiety - 1)
@@ -65,7 +68,53 @@ export const useCharacterStore = defineStore('character', {
             type: 'SYSTEM'
           })
         }
+
+        // 检查是否死亡
+        if (this.health === 0) {
+          await this.handleDeath()
+        }
       }
+    },
+
+    // 处理角色死亡
+    async handleDeath() {
+      const result = await showDialog({
+        message: '你的角色死亡了...',
+        options: [
+          { text: '重新开始', value: 'restart' }
+        ],
+        closeOnOverlay: false
+      })
+
+      if (result === 'restart') {
+        await this.restartGame()
+      }
+    },
+
+    // 重置游戏
+    async restartGame() {
+      // 重置时间
+      const timeStore = useTimeStore()
+      timeStore.$patch({
+        timestamp: 0,
+        weather: 'SUNNY'
+      })
+
+      // 重置资源
+      const resourceStore = useResourcesStore()
+      resourceStore.$reset()
+
+      // 重置角色状态
+      this.$reset()
+
+      // 清空游戏消息
+      emitter.emit('clear-messages')
+
+      // 发送游戏重启消息
+      gameLog({
+        text: '新的一天开始了...',
+        type: 'SYSTEM'
+      })
     }
   },
   
