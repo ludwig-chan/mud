@@ -1,5 +1,5 @@
 import { createApp, h } from 'vue'
-import DialogBox from '@/components/DialogBox.vue'
+import DialogBox from '@/components/common/DialogBox.vue'
 
 interface DialogOption {
   text: string

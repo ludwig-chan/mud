@@ -14,11 +14,11 @@
 </template>
 
 <script setup lang="ts">
-import ActionsPanel from '@/components/ActionsPanel.vue'
-import InfoPanel from '@/components/InfoPanel.vue'
-import GameFeed from '@/components/GameFeed.vue'
-import GameDateTime from '@/components/GameDateTime.vue'
-import PlayerStatus from '@/components/PlayerStatus.vue'
+import ActionsPanel from '@/components/game/ActionsPanel.vue'
+import InfoPanel from '@/components/game/InfoPanel.vue'
+import GameFeed from '@/components/game/GameFeed.vue'
+import GameDateTime from '@/components/game/GameDateTime.vue'
+import PlayerStatus from '@/components/game/PlayerStatus.vue'
 </script>
 
 <style scoped>

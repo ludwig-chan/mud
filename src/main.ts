@@ -10,8 +10,8 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import App from './App.vue'
 import router from './router'
-import TimerButton from './components/TimerButton.vue'
-import BlockWrapper from './components/BlockWrapper.vue'
+import TimerButton from './components/common/TimerButton.vue'
+import BlockWrapper from './components/common/BlockWrapper.vue'
 
 const app = createApp(App)
 const pinia = createPinia()

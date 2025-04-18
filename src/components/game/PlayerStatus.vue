@@ -26,8 +26,8 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { useCharacterStore } from '../stores/character'
-import ProgressBar from './ProgressBar.vue'
+import { useCharacterStore } from '../../stores/character'
+import ProgressBar from '../common/ProgressBar.vue'
 
 const router = useRouter()
 const character = useCharacterStore()

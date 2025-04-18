@@ -69,7 +69,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import ProgressBar from '../components/ProgressBar.vue'
+import ProgressBar from '../components/common/ProgressBar.vue'
 import { useCharacterStore } from '../stores/character'
 
 const router = useRouter()

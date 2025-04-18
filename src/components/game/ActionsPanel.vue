@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { useResourcesStore } from '../stores/resources'
-import { gameLog } from '../utils/eventBus'
+import { useResourcesStore } from '../../stores/resources'
+import { gameLog } from '../../utils/eventBus'
 
 const resources = useResourcesStore()
 

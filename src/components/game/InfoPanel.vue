@@ -49,10 +49,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useResourcesStore } from '../stores/resources'
-import { gameLog } from '../utils/eventBus'
-import Tabs from './Tabs.vue'
-import type { FruitType } from '../stores/resources'
+import { useResourcesStore } from '../../stores/resources'
+import { gameLog } from '../../utils/eventBus'
+import Tabs from '../common/Tabs.vue'
+import type { FruitType } from '../../stores/resources'
 
 const resources = useResourcesStore()
 const activeTab = ref('inventory')

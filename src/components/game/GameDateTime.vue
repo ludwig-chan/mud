@@ -24,9 +24,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useTimeStore, type Season, type Weather } from '../stores/time'
-import { type DayPeriod, seasonNames, weatherNames, periodNames } from '../utils/textMapping'
-import { gameLog } from '../utils/eventBus'
+import { useTimeStore, type Season, type Weather } from '../../stores/time'
+import { type DayPeriod, seasonNames, weatherNames, periodNames } from '../../utils/textMapping'
+import { gameLog } from '../../utils/eventBus'
 
 const timeStore = useTimeStore()
 
