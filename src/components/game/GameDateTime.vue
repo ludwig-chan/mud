@@ -25,8 +25,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useTimeStore, type Season, type Weather } from '../../stores/time'
+import BlockWrapper from '../common/BlockWrapper.vue'
 import { type DayPeriod, seasonNames, weatherNames, periodNames } from '../../utils/textMapping'
-import { gameLog } from '../../utils/eventBus'
+import { gameLog, emitter } from '../../utils/eventBus'
 
 const timeStore = useTimeStore()
 
@@ -163,6 +164,9 @@ onMounted(() => {
     timeStore.$patch(state => {
       state.timestamp++
     })
+
+    // 触发每小时事件
+    emitter.emit('hour-passed')
 
     // 检查年份变化
     timeStore.checkYearChange()

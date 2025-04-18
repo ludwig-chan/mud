@@ -52,7 +52,7 @@ const handleEatFruit = async (fruitType: 'apple' | 'banana' | 'watermelon' | 'du
   const result = await resources.eatFruit(fruitType)
   if (result.success) {
     const fruitName = fruitNames[fruitType]
-    let message = `食用了一个${fruitName}`
+    let message = `食用了一个${fruitName}，饱食度+${result.satietyGained}`
     if (result.gotSeed) {
       message += `，并且得到了一颗${fruitName}种子！`
     } else {

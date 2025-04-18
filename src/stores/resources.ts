@@ -1,7 +1,16 @@
 import { defineStore } from 'pinia'
 import { gameLog } from '../utils/eventBus'
+import { useCharacterStore } from './character'
 
 export type FruitType = 'apple' | 'banana' | 'watermelon' | 'durian'
+
+// 定义每种水果的饱食度
+const fruitSatiety: Record<FruitType, number> = {
+  apple: 5,      // 苹果提供5点饱食度
+  banana: 8,     // 香蕉提供8点饱食度
+  watermelon: 15, // 西瓜提供15点饱食度
+  durian: 20     // 榴莲提供20点饱食度
+}
 
 interface FruitCount {
   apple: number;
@@ -92,13 +101,17 @@ export const useResourcesStore = defineStore('resources', {
       if (this.fruits[fruitType] > 0) {
         this.fruits[fruitType]--
         
+        // 增加饱食度
+        const character = useCharacterStore()
+        character.satiety = Math.min(100, character.satiety + fruitSatiety[fruitType])
+        
         // 20%概率获得种子
         const gotSeed = Math.random() < 0.2
         if (gotSeed) {
           this.seeds[fruitType]++
         }
         
-        return { success: true, gotSeed }
+        return { success: true, gotSeed, satietyGained: fruitSatiety[fruitType] }
       }
       return { success: false, gotSeed: false }
     },

@@ -28,6 +28,8 @@
 import { useRouter } from 'vue-router'
 import { useCharacterStore } from '../../stores/character'
 import ProgressBar from '../common/ProgressBar.vue'
+import { emitter } from '../../utils/eventBus'
+import { onMounted, onUnmounted } from 'vue'
 
 const router = useRouter()
 const character = useCharacterStore()
@@ -35,6 +37,17 @@ const character = useCharacterStore()
 const goToCharacterView = () => {
   router.push('/character')
 }
+
+// 监听每小时事件
+onMounted(() => {
+  emitter.on('hour-passed', () => {
+    character.hourlyUpdate()
+  })
+})
+
+onUnmounted(() => {
+  emitter.off('hour-passed')
+})
 </script>
 
 <style scoped>

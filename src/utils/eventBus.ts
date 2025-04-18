@@ -8,6 +8,7 @@ export type GameMessage = {
 
 export type Events = {
   'game-message': string | GameMessage;
+  'hour-passed': void;  // 每小时触发的事件
 }
 
 export const emitter = mitt<Events>()
