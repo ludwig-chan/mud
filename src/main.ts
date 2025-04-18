@@ -11,6 +11,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 import TimerButton from './components/TimerButton.vue'
+import BlockWrapper from './components/BlockWrapper.vue'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -19,6 +20,7 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
 app.component('TimerButton', TimerButton)
+app.component('BlockWrapper', BlockWrapper)
 
 // 禁用移动端长按菜单
 document.addEventListener('contextmenu', (e) => {

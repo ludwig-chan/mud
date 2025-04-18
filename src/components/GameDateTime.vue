@@ -1,23 +1,25 @@
 <template>
-  <div class="game-date-time">
-    <span class="date-group">
-      <span class="date-item year">第{{timeStore.year}}年</span>
-      <span class="date-separator">·</span>
-      <span class="date-item season">{{seasonNames[timeStore.season]}}</span>
-      <span class="date-separator">·</span>
-      <span class="date-item">{{timeStore.day}}日</span>
-    </span>
-    
-    <span class="time-group">
-      <span class="time-item">{{timeStore.hour}}时</span>
-      <span class="time-separator">/</span>
-      <span class="time-item">{{periodNames[currentPeriod]}}</span>
-    </span>
+  <BlockWrapper>
+    <div class="game-date-time">
+      <span class="date-group">
+        <span class="date-item year">第{{timeStore.year}}年</span>
+        <span class="date-separator">·</span>
+        <span class="date-item season">{{seasonNames[timeStore.season]}}</span>
+        <span class="date-separator">·</span>
+        <span class="date-item">{{timeStore.day}}日</span>
+      </span>
+      
+      <span class="time-group">
+        <span class="time-item">{{timeStore.hour}}时</span>
+        <span class="time-separator">/</span>
+        <span class="time-item">{{periodNames[currentPeriod]}}</span>
+      </span>
 
-    <span class="weather-text">
-      {{weatherNames[timeStore.weather]}}
-    </span>
-  </div>
+      <span class="weather-text">
+        {{weatherNames[timeStore.weather]}}
+      </span>
+    </div>
+  </BlockWrapper>
 </template>
 
 <script setup lang="ts">
@@ -201,13 +203,9 @@ onUnmounted(() => {
 
 <style scoped>
 .game-date-time {
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1rem;
   width: 100%;
 }
 

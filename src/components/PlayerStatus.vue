@@ -40,11 +40,11 @@ const goToCharacterView = () => {
 <style scoped>
 .player-status {
   background-color: #f5f5f5;
-  padding: 1rem;
+  padding: 0.6rem;  /* 减小内边距 */
   border-radius: 6px;
   display: grid;
   grid-template-columns: auto auto 1fr;
-  gap: 1.5rem;
+  gap: 1rem;  /* 减小间距 */
   align-items: center;
   cursor: pointer;
   transition: transform 0.2s;
@@ -62,9 +62,9 @@ const goToCharacterView = () => {
 .main-stats {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;  /* 减小状态条之间的间距 */
   flex-grow: 1;
-  padding: 0.5rem;
+  padding: 0.3rem;  /* 减小内边距 */
 }
 
 .avatar-section, .basic-info {
@@ -81,16 +81,16 @@ const goToCharacterView = () => {
 }
 
 .basic-info {
-  font-size: 0.9rem;
+  font-size: 0.85rem;  /* 稍微减小字体 */
   color: #666;
-  padding: 0 0.5rem;
+  padding: 0 0.3rem;  /* 减小内边距 */
 }
 
 .info-item.name {
-  font-size: 1.1rem;
+  font-size: 1rem;  /* 减小名字字体 */
   font-weight: bold;
   color: #333;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.1rem;  /* 减小间距 */
 }
 
 .info-item {
@@ -98,8 +98,8 @@ const goToCharacterView = () => {
 }
 
 .avatar {
-  width: 70px;
-  height: 70px;
+  width: 50px;  /* 减小头像尺寸 */
+  height: 50px;  /* 减小头像尺寸 */
   border-radius: 50%;
   overflow: hidden;
   background-color: #e0e0e0;
@@ -115,7 +115,7 @@ const goToCharacterView = () => {
 }
 
 .emoji {
-  font-size: 36px;
+  font-size: 28px;  /* 减小表情符号大小 */
   line-height: 1;
 }
 </style>
