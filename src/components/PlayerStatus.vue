@@ -1,33 +1,23 @@
 <template>
-  <div class="player-status">
-    <div class="avatar-section" @click="goToCharacterView">      <div class="avatar">
+  <div class="player-status" @click="goToCharacterView">
+    <div class="avatar-section">
+      <div class="avatar">
         <div class="avatar-placeholder">
           <span class="emoji">{{ character.avatar }}</span>
         </div>
       </div>
     </div>
-    <div class="basic-info" @click="goToCharacterView">      <div class="info-item name">{{ character.name }}</div>
+    <div class="basic-info">
+      <div class="info-item name">{{ character.name }}</div>
       <div class="info-item">{{ character.age }}岁 · {{ character.gender === 'male' ? '♂' : '♀' }}</div>
     </div>
-    <div class="stats-container" @click="goToCharacterView">
-      <div class="health-bar">
-        <ProgressBar :value="character.health" label="健康" direction="vertical" color="rgb(220, 53, 69)" />
-      </div>
+    <div class="stats-container">
       <div class="main-stats">
         <div class="status-item">
-          <ProgressBar :value="character.energy" label="体力" color="rgb(0, 123, 255)" />
+          <ProgressBar :value="character.health" label="❤️" color="rgb(220, 53, 69)" />
         </div>
         <div class="status-item">
-          <ProgressBar :value="character.satiety" label="饱腹" color="rgb(255, 153, 0)" />
-        </div>
-        <div class="status-item">
-          <ProgressBar :value="character.mood" label="心情" color="rgb(147, 112, 219)" />
-        </div>
-        <div class="status-item">
-          <ProgressBar :value="character.hygiene" label="清洁" color="rgb(32, 178, 170)" />
-        </div>
-        <div class="status-item">
-          <ProgressBar :value="character.mana" label="魔力" color="rgb(138, 43, 226)" />
+          <ProgressBar :value="character.satiety" label="🍗" color="rgb(255, 153, 0)" />
         </div>
       </div>
     </div>
@@ -56,27 +46,29 @@ const goToCharacterView = () => {
   grid-template-columns: auto auto 1fr;
   gap: 1.5rem;
   align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.player-status:hover {
+  transform: scale(1.02);
 }
 
 .stats-container {
   display: flex;
-  gap: 0;
-  align-items: stretch;
-  cursor: pointer;
-  transition: transform 0.2s;
+  align-items: center;
 }
 
-.stats-container:hover {
-  transform: scale(1.02);
+.main-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-grow: 1;
+  padding: 0.5rem;
 }
 
 .avatar-section, .basic-info {
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.avatar-section:hover, .basic-info:hover {
-  transform: scale(1.05);
+  cursor: default;
 }
 
 .health-bar {
@@ -125,25 +117,5 @@ const goToCharacterView = () => {
 .emoji {
   font-size: 36px;
   line-height: 1;
-}
-
-.main-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  flex-grow: 1;
-}
-
-.status-item {
-  display: flex;
-  align-items: center;  gap: 0.5rem;
-  width: 100%;
-}
-
-.label {
-  font-size: 0.9rem;
-  color: #666;
-  width: 3em;
-  text-align: right;
 }
 </style>

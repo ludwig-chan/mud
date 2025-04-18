@@ -1,9 +1,11 @@
 <template>
   <div class="character-detail">
+    <div class="close-button" @click="goBack">✖</div>
     <h1>人物信息</h1>
-    
+
     <div class="character-profile">
-      <!-- 头像部分 -->      <div class="profile-avatar">
+      <!-- 头像部分 -->
+      <div class="profile-avatar">
         <div class="avatar">
           <span class="emoji">{{ character.avatar }}</span>
         </div>
@@ -19,8 +21,9 @@
           <label>年龄：</label>
           <span>{{ character.age }}岁</span>
         </div>
-        <div class="info-group">          <label>性别：</label>
-          <span>{{ character.gender === 'male' ? '男' : '女' }}</span>
+        <div class="info-group">
+          <label>性别：</label>
+          <span>{{ character.gender === 'male' ? '♂' : '♀' }}</span>
         </div>
       </div>
 
@@ -29,32 +32,32 @@
         <h2>状态详情</h2>
         <div class="status-grid">
           <div class="status-item">
-            <label>健康值：</label>
+            <label>❤️</label>
             <ProgressBar :value="character.health" color="rgb(220, 53, 69)" />
             <span>{{ character.health }}%</span>
           </div>
           <div class="status-item">
-            <label>体力值：</label>
+            <label>💪</label>
             <ProgressBar :value="character.energy" color="rgb(0, 123, 255)" />
             <span>{{ character.energy }}%</span>
           </div>
           <div class="status-item">
-            <label>饱腹值：</label>
+            <label>🍗</label>
             <ProgressBar :value="character.satiety" color="rgb(255, 153, 0)" />
             <span>{{ character.satiety }}%</span>
           </div>
           <div class="status-item">
-            <label>心情值：</label>
+            <label>😊</label>
             <ProgressBar :value="character.mood" color="rgb(147, 112, 219)" />
             <span>{{ character.mood }}%</span>
           </div>
           <div class="status-item">
-            <label>清洁度：</label>
+            <label>✨</label>
             <ProgressBar :value="character.hygiene" color="rgb(32, 178, 170)" />
             <span>{{ character.hygiene }}%</span>
           </div>
           <div class="status-item">
-            <label>魔力值：</label>
+            <label>🔮</label>
             <ProgressBar :value="character.mana" color="rgb(138, 43, 226)" />
             <span>{{ character.mana }}%</span>
           </div>
@@ -65,10 +68,16 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import ProgressBar from '../components/ProgressBar.vue'
 import { useCharacterStore } from '../stores/character'
 
+const router = useRouter()
 const character = useCharacterStore()
+
+const goBack = () => {
+  router.back()
+}
 </script>
 
 <style scoped>
@@ -76,6 +85,29 @@ const character = useCharacterStore()
   padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1.2rem;
+}
+
+.close-button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #333;
 }
 
 h1 {
@@ -143,19 +175,21 @@ h2 {
 
 .status-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
 }
 
 .status-item {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .status-item label {
-  min-width: 70px;
-  color: #666;
+  min-width: 30px;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
 }
 
 .status-item :deep(.progress-bar) {

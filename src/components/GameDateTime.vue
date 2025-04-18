@@ -162,11 +162,15 @@ onMounted(() => {
       state.timestamp++
     })
 
+    // 检查年份变化
+    timeStore.checkYearChange()
+
     // 20%的概率改变天气
     if (Math.random() < 0.2) {
       const newWeather = generateWeather(timeStore.season as Season)
       const oldWeather = timeStore.weather
-      // 只有在天气真的发生变化时才发送消息      if (newWeather !== oldWeather) {
+      // 只有在天气真的发生变化时才发送消息
+      if (newWeather !== oldWeather) {
         timeStore.updateWeather(newWeather)
         // 根据新天气生成简洁的提示
         let weatherMessage = ''
