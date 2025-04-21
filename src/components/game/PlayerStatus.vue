@@ -63,10 +63,6 @@ onUnmounted(() => {
   transition: transform 0.2s;
 }
 
-.player-status:hover {
-  transform: scale(1.02);
-}
-
 .stats-container {
   display: flex;
   align-items: center;

@@ -1,5 +1,4 @@
 import './assets/main.css'
-import './assets/tooltip.css'
 import { registerSW } from 'virtual:pwa-register'
 
 registerSW({ immediate: true })
@@ -10,7 +9,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import App from './App.vue'
 import router from './router'
-import TimerButton from './components/common/TimerButton.vue'
+import ActionButton from './components/common/ActionButton.vue'
 import BlockWrapper from './components/common/BlockWrapper.vue'
 
 const app = createApp(App)
@@ -19,7 +18,7 @@ pinia.use(piniaPluginPersistedstate)
 
 app.use(pinia)
 app.use(router)
-app.component('TimerButton', TimerButton)
+app.component('ActionButton', ActionButton)
 app.component('BlockWrapper', BlockWrapper)
 
 // 禁用移动端长按菜单
@@ -55,9 +54,5 @@ document.addEventListener('touchmove', (e) => {
     e.preventDefault()
   }
 }, { passive: false })
-
-// 注册 tooltip 指令
-import tooltip from './directives/tooltip'
-app.directive('tooltip', tooltip)
 
 app.mount('#app')

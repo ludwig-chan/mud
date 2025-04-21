@@ -46,7 +46,7 @@ export const useCharacterStore = defineStore('character', {
     
     // 处理每小时状态变化
     async hourlyUpdate() {
-      // 降低饱食度
+      // 降低饱食度并影响体力
       if (this.satiety > 0) {
         this.satiety = Math.max(0, this.satiety - 1)
         
@@ -57,22 +57,35 @@ export const useCharacterStore = defineStore('character', {
             type: 'SYSTEM'
           })
         }
-      } 
-      // 饱食度为0时降低健康值
-      else if (this.health > 0) {
+        
+        // 饱食度低于20时，降低体力
+        if (this.satiety < 20) {
+          this.energy = Math.max(0, this.energy - 2)
+        }
+      } else {
+        // 饱食度为0时，大幅降低体力
+        this.energy = Math.max(0, this.energy - 5)
+      }
+
+      // 体力影响健康值
+      if (this.energy < 30) {
+        // 低体力时降低健康值
         this.health = Math.max(0, this.health - 1)
         
         if (this.health < 20) {
           gameLog({
-            text: '你感觉身体非常虚弱，需要尽快进食...',
+            text: '你感觉身体非常虚弱，需要休息和补充能量...',
             type: 'SYSTEM'
           })
         }
+      } else if (this.energy > 70 && this.health < 100) {
+        // 高体力时缓慢恢复健康值
+        this.health = Math.min(100, this.health + 1)
+      }
 
-        // 检查是否死亡
-        if (this.health === 0) {
-          await this.handleDeath()
-        }
+      // 检查是否死亡
+      if (this.health === 0) {
+        await this.handleDeath()
       }
     },
 

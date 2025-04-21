@@ -1,18 +1,36 @@
 <template>
   <section class="actions-panel">
     <div class="action-buttons">
-      <TimerButton :duration="5" @click="handleChopWood" v-tooltip="resources.axe <= 0 ? '需要斧头才能砍伐' : ''">
-        砍伐
-      </TimerButton>
-      <TimerButton :duration="3" @click="handleGatherFruit">
-        采集
-      </TimerButton>
-      <TimerButton :duration="3" @click="resources.mineOre">
+    <ActionButton 
+      :duration="5" 
+      @click="handleChopWood"
+      :preCondition="() => resources.axeCount > 0"
+      :tooltip="'需要斧头才能砍伐'"
+    >
+      砍伐
+    </ActionButton>
+      <ActionButton 
+      :duration="3" 
+      @click="handleGatherFruit"
+      mobile
+      >
+      采集
+    </ActionButton>
+      <ActionButton 
+        :duration="3" 
+        @click="resources.mineOre"
+        mobile
+      >
         采矿
-      </TimerButton>
-      <TimerButton :duration="10" @click="craftAxe" v-tooltip="'需要材料：木材x3 矿石x2'">
-        打造斧头
-      </TimerButton>
+      </ActionButton>
+      <ActionButton 
+        :duration="10" 
+        @click="craftAxe"
+        :preCondition="() => resources.wood >= 3 && resources.ore >= 2"
+        mobile
+      >
+        打造斧头 (木材x3 矿石x2)
+      </ActionButton>
     </div>
   </section>
 </template>
