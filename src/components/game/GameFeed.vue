@@ -75,7 +75,7 @@ const currentTime = ref(Date.now())
 
 // 清空所有消息
 const clearMessages = async () => {
-  if (await confirm('确定要清空所有消息吗？')) {
+  if (await confirm('要清空所有消息吗？')) {
     messages.value = []
   }
 }

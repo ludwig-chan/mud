@@ -96,7 +96,8 @@ export const useCharacterStore = defineStore('character', {
         options: [
           { text: '重新开始', value: 'restart' }
         ],
-        closeOnOverlay: false
+        closeOnOverlay: false,
+        allowMultiple: false
       })
 
       if (result === 'restart') {
