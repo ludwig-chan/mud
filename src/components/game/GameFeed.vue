@@ -58,6 +58,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { emitter } from '@/utils/eventBus'
 import { useTimeStore } from '@/stores/time'
 import { seasonNames, type MessageType, messageTypeNames } from '@/utils/textMapping'
+import { confirm } from '@/utils/dialog'
 import type { Season } from '@/stores/time'
 import type { GameMessage } from '@/utils/eventBus'
 
@@ -73,8 +74,10 @@ const timeStore = useTimeStore()
 const currentTime = ref(Date.now())
 
 // 清空所有消息
-const clearMessages = () => {
-  messages.value = []
+const clearMessages = async () => {
+  if (await confirm('确定要清空所有消息吗？')) {
+    messages.value = []
+  }
 }
 
 onMounted(() => {
@@ -204,34 +207,12 @@ const toggleFilter = (type: MessageType) => {
   }
 };
 
-const init = () => {
-  // 监听消息
-  onMounted(() => {  emitter.on('game-message', (data: string | { text: string, type: MessageType }) => {
-      const messageData = typeof data === 'string' 
-        ? { text: data, type: 'SYSTEM' as MessageType } 
-        : data;
-      messages.value.push({
-        text: messageData.text,
-        type: messageData.type,
-        gameTimestamp: timeStore.timestamp,
-        timestamp: Date.now()
-      });
-      // 限制最多保留100条消息
-      if (messages.value.length > 100) {
-        messages.value = messages.value.slice(-100)
-      }
-      scrollToBottom()
-    })
-  })
-}
-
 // 组件卸载时清理监听器和定时器
 onUnmounted(() => {
   emitter.off('game-message')
   clearInterval(updateTimer)
 })
 
-init()
 </script>
 
 <style scoped>

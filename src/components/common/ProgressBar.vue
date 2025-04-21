@@ -53,7 +53,7 @@ const getTextStyle = (): CSSProperties => {
     )`,
     WebkitBackgroundClip: 'text',
     backgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
+    // WebkitTextFillColor: 'transparent',
     writingMode: isVertical ? 'vertical-rl' : 'horizontal-tb',
     textOrientation: isVertical ? 'mixed' : 'initial',
     height: isVertical ? '100%' : 'auto',

@@ -17,7 +17,7 @@
           <ProgressBar :value="character.health" label="❤️" color="rgb(220, 53, 69)" />
         </div>
         <div class="status-item">
-          <ProgressBar :value="character.satiety" label="🍗" color="rgb(255, 153, 0)" />
+          <ProgressBar :value="character.energy" label="💪" color="rgb(0, 123, 255)" />
         </div>
       </div>
     </div>

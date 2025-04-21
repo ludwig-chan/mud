@@ -25,9 +25,9 @@ export const useCharacterStore = defineStore('character', {
     avatar: '👤',
     age: 18,
     gender: 'male',
-    health: 5,
+    health: 50,
     energy: 100,
-    satiety: 5,
+    satiety: 50,
     mood: 100,
     hygiene: 100,
     mana: 0
