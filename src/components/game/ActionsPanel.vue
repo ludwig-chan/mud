@@ -4,18 +4,17 @@
       <ActionButton
         :duration="5"
         @click="handleChopWood"
-        :preCondition="() => resources.axeCount > 0"
+        :disabled="resources.axeCount === 0"
         :tooltip="'需要斧头才能砍伐'"
       >
         砍伐
       </ActionButton>
-      <ActionButton :duration="3" @click="handleGatherFruit" mobile> 采集 </ActionButton>
-      <ActionButton :duration="3" @click="resources.mineOre" mobile> 采矿 </ActionButton>
+      <ActionButton :duration="3" @click="handleGatherFruit"> 采集 </ActionButton>
+      <ActionButton :duration="3" @click="resources.mineOre"> 采矿 </ActionButton>
       <ActionButton
         :duration="10"
         @click="craftAxe"
-        :preCondition="() => resources.wood >= 3 && resources.ore >= 2"
-        mobile
+        :disabled="resources.wood < 3 || resources.ore < 2"
         :tooltip="'需要：木材x3 矿石x2'"
       >
         打造斧头
