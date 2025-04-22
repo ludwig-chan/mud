@@ -26,7 +26,6 @@ const longPressTimer = ref<number | null>(null);
 const touchDelayTimer = ref<number | null>(null); // 触摸延迟计时器
 const doubleClickTimer = ref<number | null>(null); // 双击检测计时器
 let isLongPressing = false; // 用于标记是否正在长按
-let isWaitingSecondTouchEnd = false; // 用于标记是否在等待第二次触摸结束
 
 const handleMouseOver = () => {
   showTooltip.value = true;
@@ -45,12 +44,11 @@ const handleTouchStart = (e: TouchEvent) => {
   if (touchDelayTimer.value) {
     clearTimeout(touchDelayTimer.value);
     touchDelayTimer.value = null;
-    isWaitingSecondTouchEnd = true; // 标记等待第二次touchend
 
     // 设置双击检测计时器
     doubleClickTimer.value = window.setTimeout(() => {
+      console.log("双击超时，重置状态");
       // 如果到时间了还没收到第二次touchend，就重置状态
-      isWaitingSecondTouchEnd = false;
       doubleClickTimer.value = null;
     }, 200);
 
@@ -69,11 +67,12 @@ const handleTouchEnd = () => {
     longPressTimer.value = null;
   }
 
-  // 如果正在等待第二次touchend，并且doubleClickTimer还在，说明这是一个有效的双击
-  if (isWaitingSecondTouchEnd && doubleClickTimer.value) {
+  // 如果存在双击检测计时器，说明这是第二次触摸的结束，是一个有效的双击
+  console.log("doubleClickTimer:", doubleClickTimer.value);
+  if (doubleClickTimer.value) {
+    console.log("双击触发，取消倒计时");
     clearTimeout(doubleClickTimer.value);
     doubleClickTimer.value = null;
-    isWaitingSecondTouchEnd = false;
     cancelCountdown(); // 执行取消倒计时
     return;
   }
@@ -89,8 +88,8 @@ const handleTouchEnd = () => {
     clearTimeout(touchDelayTimer.value);
   }
 
-  // 不在等待第二次touchend的情况下，才设置新的延迟计时器
-  if (!isWaitingSecondTouchEnd) {
+  // 如果不是双击状态，才设置新的延迟计时器
+  if (!doubleClickTimer.value) {
     touchDelayTimer.value = window.setTimeout(() => {
       if (isCountingDown.value) {
         return;
