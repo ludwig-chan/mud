@@ -19,134 +19,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-
-const showTooltip = ref(false);
-const longPressTimer = ref<number | null>(null);
-const touchDelayTimer = ref<number | null>(null); // 触摸延迟计时器
-const doubleClickTimer = ref<number | null>(null); // 双击检测计时器
-let isLongPressing = false; // 用于标记是否正在长按
-
-const handleMouseOver = () => {
-  showTooltip.value = true;
-};
-
-const handleMouseLeave = () => {
-  showTooltip.value = false;
-};
-
-const handleTouchStart = (e: TouchEvent) => {
-  // 防止长按时触发浏览器默认的上下文菜单
-  isLongPressing = false;
-  e.preventDefault(); // 避免触发click事件
-
-  // 如果存在延迟计时器，说明在等待第二次点击，这时触发了touchstart
-  if (touchDelayTimer.value) {
-    clearTimeout(touchDelayTimer.value);
-    touchDelayTimer.value = null;
-
-    // 设置双击检测计时器
-    doubleClickTimer.value = window.setTimeout(() => {
-      console.log("双击超时，重置状态");
-      // 如果到时间了还没收到第二次touchend，就重置状态
-      doubleClickTimer.value = null;
-    }, 200);
-
-    return; // 不执行后续的长按逻辑
-  }
-
-  longPressTimer.value = window.setTimeout(() => {
-    isLongPressing = true;
-    showTooltip.value = true;
-  }, 500); // 500ms认为是长按
-};
-
-const handleTouchEnd = () => {
-  if (longPressTimer.value) {
-    clearTimeout(longPressTimer.value);
-    longPressTimer.value = null;
-  }
-
-  // 如果存在双击检测计时器，说明这是第二次触摸的结束，是一个有效的双击
-  console.log("doubleClickTimer:", doubleClickTimer.value);
-  if (doubleClickTimer.value) {
-    console.log("双击触发，取消倒计时");
-    clearTimeout(doubleClickTimer.value);
-    doubleClickTimer.value = null;
-    cancelCountdown(); // 执行取消倒计时
-    return;
-  }
-
-  if (isLongPressing) {
-    showTooltip.value = false;
-    isLongPressing = false;
-    return;
-  }
-
-  // 清除之前的延迟计时器
-  if (touchDelayTimer.value) {
-    clearTimeout(touchDelayTimer.value);
-  }
-
-  // 如果不是双击状态，才设置新的延迟计时器
-  if (!doubleClickTimer.value) {
-    touchDelayTimer.value = window.setTimeout(() => {
-      if (isCountingDown.value) {
-        return;
-      }
-      startCountdown();
-      touchDelayTimer.value = null;
-    }, 200); // 等待200ms，如果这期间没有新的touchstart，就执行startCountdown
-  }
-};
+import { useTooltip } from '@/composables/useTooltip';
+import { useCountdown } from '@/composables/useCountdown';
+import { useTouchEvents } from '@/composables/useTouchEvents';
 
 const props = defineProps<{
-  duration?: number; // 操作持续时间，单位为秒
-  disabled?: boolean; // 按钮是否禁用
-  tooltip?: string; // 鼠标悬浮时显示的提示信息
+  duration?: number;
+  disabled?: boolean;
+  tooltip?: string;
 }>();
 
 const emit = defineEmits<{
-  click: []; // 操作完成时触发
+  click: [];
 }>();
 
-const isCountingDown = ref(false);
-const remainingTime = ref(0); // 存储剩余毫秒数
-const progressPercentage = computed(() => {
-  const durationMs = (props.duration || 0) * 1000;
-  return ((durationMs - remainingTime.value) / durationMs) * 100;
-});
-let timer: number | null = null;
+// 使用组合式函数
+const { showTooltip, handleMouseOver, handleMouseLeave } = useTooltip();
+const { isCountingDown, progressPercentage, startCountdown, cancelCountdown } = useCountdown(props.duration || 0);
 
-const cancelCountdown = () => {
-  if (timer) {
-    clearInterval(timer);
-    timer = null;
-  }
-  isCountingDown.value = false;
-  remainingTime.value = 0;
-};
-
-const startCountdown = () => {
-  isCountingDown.value = true;
-  remainingTime.value = (props.duration || 0) * 1000;
-
-  timer = setInterval(() => {
-    remainingTime.value -= 100;
-    if (remainingTime.value <= 0) {
-      cancelCountdown();
-      emit("click");
+// 配置触摸事件处理
+const { handleTouchStart, handleTouchEnd } = useTouchEvents({
+  onLongPress: () => showTooltip.value = true,
+  onLongPressEnd: () => showTooltip.value = false,
+  onDoubleTouch: cancelCountdown,
+  onSingleTouch: () => {
+    if (!isCountingDown.value) {
+      startCountdown(() => emit('click'));
     }
-  }, 100);
-};
+  }
+});
 
 const handleClick = () => {
   if (isCountingDown.value) {
-    cancelCountdown(); // 如果正在倒计时，点击则取消
+    cancelCountdown();
     return;
   }
-
-  startCountdown(); // 否则开始倒计时
+  startCountdown(() => emit('click'));
 };
 </script>
 
