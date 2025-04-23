@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { gameLog } from '../utils/eventBus'
 import { useCharacterStore } from './character'
 import { useEquipmentStore } from './equipment'
+import { resourceNames } from '../utils/textMapping'
 
 export type ItemType = 'wood' | 'ore' | 'branch' | 'fruit' | 'seed';
 export type FruitType = 'apple' | 'banana' | 'watermelon' | 'durian';
@@ -9,6 +10,7 @@ export type FruitType = 'apple' | 'banana' | 'watermelon' | 'durian';
 export interface BaseItem {
   count: number;
   type: ItemType;
+  name: string;
 }
 
 export interface ResourceItem extends BaseItem {
@@ -34,21 +36,6 @@ const fruitSatiety: Record<FruitType, number> = {
   durian: 20     // 榴莲提供20点饱食度
 }
 
-// 物品名称映射
-export const itemNames = {
-  wood: '木材',
-  ore: '矿石',
-  branch: '树枝',
-  apple: '苹果',
-  banana: '香蕉',
-  watermelon: '西瓜',
-  durian: '榴莲',
-  appleSeed: '苹果种子',
-  bananaSeed: '香蕉种子',
-  watermelonSeed: '西瓜种子',
-  durianSeed: '榴莲种子'
-} as const
-
 export interface State {
   wood: ResourceItem;
   ore: ResourceItem;
@@ -65,21 +52,20 @@ export interface State {
 
 export const useResourcesStore = defineStore('resources', {
   state: () => ({
-    wood: { type: 'wood', count: 0 } as ResourceItem,
-    ore: { type: 'ore', count: 0 } as ResourceItem,
-    branch: { type: 'branch', count: 0 } as ResourceItem,
-    apple: { type: 'fruit', fruitType: 'apple', count: 0, satiety: fruitSatiety.apple } as FruitItem,
-    banana: { type: 'fruit', fruitType: 'banana', count: 0, satiety: fruitSatiety.banana } as FruitItem,
-    watermelon: { type: 'fruit', fruitType: 'watermelon', count: 0, satiety: fruitSatiety.watermelon } as FruitItem,
-    durian: { type: 'fruit', fruitType: 'durian', count: 0, satiety: fruitSatiety.durian } as FruitItem,
-    appleSeed: { type: 'seed', fruitType: 'apple', count: 0 } as SeedItem,
-    bananaSeed: { type: 'seed', fruitType: 'banana', count: 0 } as SeedItem,
-    watermelonSeed: { type: 'seed', fruitType: 'watermelon', count: 0 } as SeedItem,
-    durianSeed: { type: 'seed', fruitType: 'durian', count: 0 } as SeedItem
+    wood: { type: 'wood', count: 0, name: resourceNames.wood } as ResourceItem,
+    ore: { type: 'ore', count: 0, name: resourceNames.ore } as ResourceItem,
+    branch: { type: 'branch', count: 0, name: resourceNames.branch } as ResourceItem,
+    apple: { type: 'fruit', fruitType: 'apple', count: 0, satiety: fruitSatiety.apple, name: resourceNames.apple } as FruitItem,
+    banana: { type: 'fruit', fruitType: 'banana', count: 0, satiety: fruitSatiety.banana, name: resourceNames.banana } as FruitItem,
+    watermelon: { type: 'fruit', fruitType: 'watermelon', count: 0, satiety: fruitSatiety.watermelon, name: resourceNames.watermelon } as FruitItem,
+    durian: { type: 'fruit', fruitType: 'durian', count: 0, satiety: fruitSatiety.durian, name: resourceNames.durian } as FruitItem,
+    appleSeed: { type: 'seed', fruitType: 'apple', count: 0, name: resourceNames.appleSeed } as SeedItem,
+    bananaSeed: { type: 'seed', fruitType: 'banana', count: 0, name: resourceNames.bananaSeed } as SeedItem,
+    watermelonSeed: { type: 'seed', fruitType: 'watermelon', count: 0, name: resourceNames.watermelonSeed } as SeedItem,
+    durianSeed: { type: 'seed', fruitType: 'durian', count: 0, name: resourceNames.durianSeed } as SeedItem
   } as State),
   
   getters: {
-    // 获取带有显示名称的物品列表
     displayableItems(): { id: string; label: string; count: number }[] {
       return Object.entries(this)
         .filter(([key, item]) => 
@@ -90,7 +76,7 @@ export const useResourcesStore = defineStore('resources', {
         )
         .map(([key, item]) => ({
           id: key,
-          label: itemNames[key as keyof typeof itemNames],
+          label: (item as BaseItem).name,
           count: (item as BaseItem).count
         }))
     }

@@ -47,5 +47,13 @@ export const resourceNames: Record<string, string> = {
   'wood': '木材',
   'ore': '矿石',
   'branch': '树枝',
-  'axe': '斧头'
+  'axe': '斧头',
+  'apple': '苹果',
+  'banana': '香蕉',
+  'watermelon': '西瓜',
+  'durian': '榴莲',
+  'appleSeed': '苹果种子',
+  'bananaSeed': '香蕉种子',
+  'watermelonSeed': '西瓜种子',
+  'durianSeed': '榴莲种子'
 }
