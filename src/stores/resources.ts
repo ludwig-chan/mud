@@ -1,8 +1,30 @@
 import { defineStore } from 'pinia'
 import { gameLog } from '../utils/eventBus'
 import { useCharacterStore } from './character'
+import { useEquipmentStore } from './equipment'
 
-export type FruitType = 'apple' | 'banana' | 'watermelon' | 'durian'
+export type ItemType = 'wood' | 'ore' | 'branch' | 'fruit' | 'seed';
+export type FruitType = 'apple' | 'banana' | 'watermelon' | 'durian';
+
+export interface BaseItem {
+  count: number;
+  type: ItemType;
+}
+
+export interface ResourceItem extends BaseItem {
+  type: 'wood' | 'ore' | 'branch';
+}
+
+export interface FruitItem extends BaseItem {
+  type: 'fruit';
+  fruitType: FruitType;
+  satiety: number;
+}
+
+export interface SeedItem extends BaseItem {
+  type: 'seed';
+  fruitType: FruitType;
+}
 
 // 定义每种水果的饱食度
 const fruitSatiety: Record<FruitType, number> = {
@@ -12,74 +34,79 @@ const fruitSatiety: Record<FruitType, number> = {
   durian: 20     // 榴莲提供20点饱食度
 }
 
-interface FruitCount {
-  apple: number;
-  banana: number;
-  watermelon: number;
-  durian: number;
-}
+// 物品名称映射
+export const itemNames = {
+  wood: '木材',
+  ore: '矿石',
+  branch: '树枝',
+  apple: '苹果',
+  banana: '香蕉',
+  watermelon: '西瓜',
+  durian: '榴莲',
+  appleSeed: '苹果种子',
+  bananaSeed: '香蕉种子',
+  watermelonSeed: '西瓜种子',
+  durianSeed: '榴莲种子'
+} as const
 
-interface SeedCount {
-  apple: number;
-  banana: number;
-  watermelon: number;
-  durian: number;
-}
-
-interface State {
-  wood: number;
-  ore: number;
-  branch: number;
-  axeDurability: number;
-  fruits: FruitCount;
-  seeds: SeedCount;
+export interface State {
+  wood: ResourceItem;
+  ore: ResourceItem;
+  branch: ResourceItem;
+  apple: FruitItem;
+  banana: FruitItem;
+  watermelon: FruitItem;
+  durian: FruitItem;
+  appleSeed: SeedItem;
+  bananaSeed: SeedItem;
+  watermelonSeed: SeedItem;
+  durianSeed: SeedItem;
 }
 
 export const useResourcesStore = defineStore('resources', {
   state: () => ({
-    wood: 0,
-    ore: 0,
-    branch: 0,
-    axeDurability: 0,
-    fruits: {
-      apple: 0,
-      banana: 0,
-      watermelon: 0,
-      durian: 0
-    } as FruitCount,
-    seeds: {
-      apple: 0,
-      banana: 0,
-      watermelon: 0,
-      durian: 0
-    } as SeedCount
+    wood: { type: 'wood', count: 0 } as ResourceItem,
+    ore: { type: 'ore', count: 0 } as ResourceItem,
+    branch: { type: 'branch', count: 0 } as ResourceItem,
+    apple: { type: 'fruit', fruitType: 'apple', count: 0, satiety: fruitSatiety.apple } as FruitItem,
+    banana: { type: 'fruit', fruitType: 'banana', count: 0, satiety: fruitSatiety.banana } as FruitItem,
+    watermelon: { type: 'fruit', fruitType: 'watermelon', count: 0, satiety: fruitSatiety.watermelon } as FruitItem,
+    durian: { type: 'fruit', fruitType: 'durian', count: 0, satiety: fruitSatiety.durian } as FruitItem,
+    appleSeed: { type: 'seed', fruitType: 'apple', count: 0 } as SeedItem,
+    bananaSeed: { type: 'seed', fruitType: 'banana', count: 0 } as SeedItem,
+    watermelonSeed: { type: 'seed', fruitType: 'watermelon', count: 0 } as SeedItem,
+    durianSeed: { type: 'seed', fruitType: 'durian', count: 0 } as SeedItem
   } as State),
+  
   getters: {
-    axeCount(): number {
-      return this.axeDurability > 0 ? Math.ceil(this.axeDurability / 100) : 0
+    // 获取带有显示名称的物品列表
+    displayableItems(): { id: string; label: string; count: number }[] {
+      return Object.entries(this)
+        .filter(([key, item]) => 
+          key !== '$id' && 
+          typeof item === 'object' && 
+          'count' in item && 
+          item.count > 0
+        )
+        .map(([key, item]) => ({
+          id: key,
+          label: itemNames[key as keyof typeof itemNames],
+          count: (item as BaseItem).count
+        }))
     }
   },
+  
   actions: {
     async chopWood() {
-      if (this.axeDurability <= 0) {
-        gameLog({ text: '需要斧头才能砍伐！', type: 'SYSTEM' })
-        return false
+      const equipment = useEquipmentStore()
+      if (equipment.useAxe()) {
+        this.wood.count++
+        gameLog({ text: '成功砍伐了一棵树，获得了一个木材', type: 'ACTION' })
+        return true
       }
-
-      // 扣除耐久度
-      this.axeDurability -= 5
-      this.wood++
-      gameLog({ text: '成功砍伐了一棵树，获得了一个木材', type: 'ACTION' })
-      
-      // 检查耐久度是否耗尽
-      if (this.axeDurability <= 0) {
-        gameLog({ text: '你的最后一把斧头已经损坏了！', type: 'SYSTEM' })
-      } else {
-        gameLog({ text: `斧头剩余耐久度：${this.axeDurability}`, type: 'SYSTEM' })
-      }
-      
-      return true
+      return false
     },
+
     async gather() {
       // 随机决定采集到的物品类型
       const rand = Math.random()
@@ -87,45 +114,49 @@ export const useResourcesStore = defineStore('resources', {
       if (rand < 0.4) { // 40% 概率获得果实
         const fruitTypes = ['apple', 'banana', 'watermelon', 'durian'] as const
         const randomFruit = fruitTypes[Math.floor(Math.random() * fruitTypes.length)]
-        this.fruits[randomFruit]++
+        this[randomFruit].count++
         return { type: 'fruit', fruit: randomFruit }
       } else if (rand < 0.7) { // 30% 概率获得树枝
-        this.branch++
+        this.branch.count++
         return { type: 'branch' }
       } else { // 30% 概率获得矿石
-        this.ore++
+        this.ore.count++
         return { type: 'ore' }
       }
     },
-    async eatFruit(fruitType: FruitType) {
-      if (this.fruits[fruitType] > 0) {
-        this.fruits[fruitType]--
+
+    async eatFruit(fruitType: FruitType): Promise<{ success: boolean; gotSeed: boolean; satietyGained?: number }> {
+      const fruit = this[fruitType]
+      if (fruit.count > 0) {
+        fruit.count--
         
         // 增加饱食度
         const character = useCharacterStore()
-        character.satiety = Math.min(100, character.satiety + fruitSatiety[fruitType])
+        character.satiety = Math.min(100, character.satiety + fruit.satiety)
         
         // 20%概率获得种子
         const gotSeed = Math.random() < 0.2
         if (gotSeed) {
-          this.seeds[fruitType]++
+          const seedKey = `${fruitType}Seed` as keyof State
+          this[seedKey].count++
         }
         
-        return { success: true, gotSeed, satietyGained: fruitSatiety[fruitType] }
+        return { success: true, gotSeed, satietyGained: fruit.satiety }
       }
       return { success: false, gotSeed: false }
     },
+
     async mineOre() {
-      this.ore++
+      this.ore.count++
       gameLog({ text: '成功开采了一块矿石', type: 'ITEM' })
     },
+
     async craftAxe() {
-      if (this.wood >= 3 && this.ore >= 2) {
-        this.wood -= 3
-        this.ore -= 2
-        this.axeDurability += 100 // 直接增加耐久度
-        gameLog({ text: '成功打造了一把斧头！', type: 'ITEM' })
-        return true
+      const equipment = useEquipmentStore()
+      if (this.branch.count >= 3 && this.ore.count >= 2) {
+        this.branch.count -= 3
+        this.ore.count -= 2
+        return equipment.craftAxe({ branch: 3, ore: 2 })
       }
       return false
     }

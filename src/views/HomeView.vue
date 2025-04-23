@@ -40,6 +40,7 @@ import PlayerStatus from '@/components/game/PlayerStatus.vue'
   height: calc(100vh - 200px - 32px * 2 - 58px);
   display: flex;
   overflow: auto;
+  gap: 1rem;
 }
 
 .footer {

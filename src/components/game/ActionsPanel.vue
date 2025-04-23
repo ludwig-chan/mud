@@ -4,7 +4,7 @@
       <ActionButton
         :duration="5"
         @click="handleChopWood"
-        :disabled="resources.axeCount === 0"
+        :disabled="equipment.axeCount === 0"
         :tooltip="'需要斧头才能砍伐'"
       >
         砍伐
@@ -14,8 +14,8 @@
       <ActionButton
         :duration="10"
         @click="craftAxe"
-        :disabled="resources.wood < 3 || resources.ore < 2"
-        :tooltip="'需要：木材x3 矿石x2'"
+        :disabled="resources.branch.count < 3 || resources.ore.count < 2"
+        :tooltip="'需要：树枝x3 矿石x2'"
       >
         打造斧头
       </ActionButton>
@@ -25,24 +25,23 @@
 
 <script setup lang="ts">
 import { useResourcesStore } from "../../stores/resources";
+import { useEquipmentStore } from "../../stores/equipment";
 import { gameLog } from "../../utils/eventBus";
+import type { FruitType } from '../../stores/resources';
 
 const resources = useResourcesStore();
-
-const fruitNames = {
-  apple: "苹果",
-  banana: "香蕉",
-  watermelon: "西瓜",
-  durian: "榴莲",
-};
+const equipment = useEquipmentStore();
 
 const handleGatherFruit = async () => {
   const result = await resources.gather();
   switch (result.type) {
     case "fruit":
       if (result.fruit) {
-        const fruitName = fruitNames[result.fruit];
-        gameLog({ text: `采集到了一个${fruitName}！`, type: "ITEM" });
+        // 使用 resources store 中统一定义的物品名称
+        const item = resources.displayableItems.find(item => item.id === result.fruit);
+        if (item) {
+          gameLog({ text: `采集到了一个${item.label}！`, type: "ITEM" });
+        }
       }
       break;
     case "branch":
@@ -54,19 +53,21 @@ const handleGatherFruit = async () => {
   }
 };
 
-const handleEatFruit = async (
-  fruitType: "apple" | "banana" | "watermelon" | "durian"
-) => {
+const handleEatFruit = async (fruitType: FruitType) => {
   const result = await resources.eatFruit(fruitType);
   if (result.success) {
-    const fruitName = fruitNames[fruitType];
-    let message = `食用了一个${fruitName}，饱食度+${result.satietyGained}`;
-    if (result.gotSeed) {
-      message += `，并且得到了一颗${fruitName}种子！`;
-    } else {
-      message += "！";
+    // 使用 resources store 中统一定义的物品名称
+    const item = resources.displayableItems.find(item => item.id === fruitType);
+    if (item) {
+      let message = `食用了一个${item.label}，饱食度+${result.satietyGained}`;
+      if (result.gotSeed) {
+        const seedItem = resources.displayableItems.find(i => i.id === `${fruitType}Seed`);
+        message += `，并且得到了一颗${seedItem?.label || item.label + '种子'}！`;
+      } else {
+        message += "！";
+      }
+      gameLog({ text: message, type: "ACTION" });
     }
-    gameLog({ text: message, type: "ACTION" });
   }
 };
 
@@ -76,7 +77,7 @@ const handleChopWood = async () => {
 
 const craftAxe = async () => {
   if (!(await resources.craftAxe())) {
-    gameLog({ text: "资源不足！需要 3 个木材和 2 个矿石来打造斧头", type: "SYSTEM" });
+    gameLog({ text: "资源不足！需要 3 根树枝和 2 个矿石来打造斧头", type: "SYSTEM" });
   }
 };
 </script>
@@ -85,7 +86,6 @@ const craftAxe = async () => {
 .actions-panel {
   background-color: #f5f5f5;
   border-radius: 8px;
-  padding: 1rem;
 }
 
 .action-buttons {

@@ -293,7 +293,6 @@ h2 {
 }
 
 .message {
-  background-color: white;
   border-radius: 2px;
   transition: all 0.3s ease;
 }

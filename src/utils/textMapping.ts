@@ -41,3 +41,11 @@ export const messageTypeNames: Record<MessageType, string> = {
   'ACTION': '行动',
   'ITEM': '物品'
 }
+
+// 基础资源名称映射
+export const resourceNames: Record<string, string> = {
+  'wood': '木材',
+  'ore': '矿石',
+  'branch': '树枝',
+  'axe': '斧头'
+}
