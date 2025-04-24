@@ -14,7 +14,16 @@ import ResourceList from "./ResourceList.vue";
 const resources = useResourcesStore();
 
 // 统一的资源列表计算属性
-const inventoryItems = computed(() => resources.displayableItems);
+const inventoryItems = computed(() => {
+  // 将资源转换为列表格式
+  return Object.entries(resources.$state)
+    .map(([id, item]) => ({
+      id,
+      name: item.name,
+      count: item.count
+    }))
+    .filter(item => item.count > 0);
+});
 </script>
 
 <style scoped>

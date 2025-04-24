@@ -1,7 +1,6 @@
-<template>
-  <ul class="resources-list">
+<template>  <ul class="resources-list">
     <li v-for="item in items" :key="item.id" class="resource-item">
-      <span v-if="item.label">{{ item.label }}</span>
+      <span v-if="item.name">{{ item.name }}</span>
       <span v-if="item.count !== undefined">{{ item.count }}</span>
     </li>
   </ul>
@@ -10,7 +9,7 @@
 <script setup lang="ts">
 interface ResourceItem {
   id: string | number
-  label?: string
+  name?: string
   count?: number
 }
 

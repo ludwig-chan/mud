@@ -27,8 +27,6 @@
 import { useResourcesStore } from "../../stores/resources";
 import { useEquipmentStore } from "../../stores/equipment";
 import { gameLog } from "../../utils/eventBus";
-import type { FruitType } from '../../stores/resources';
-
 const resources = useResourcesStore();
 const equipment = useEquipmentStore();
 
@@ -53,23 +51,6 @@ const handleGatherFruit = async () => {
   }
 };
 
-const handleEatFruit = async (fruitType: FruitType) => {
-  const result = await resources.eatFruit(fruitType);
-  if (result.success) {
-    // 使用 resources store 中统一定义的物品名称
-    const item = resources.displayableItems.find(item => item.id === fruitType);
-    if (item) {
-      let message = `食用了一个${item.label}，饱食度+${result.satietyGained}`;
-      if (result.gotSeed) {
-        const seedItem = resources.displayableItems.find(i => i.id === `${fruitType}Seed`);
-        message += `，并且得到了一颗${seedItem?.label || item.label + '种子'}！`;
-      } else {
-        message += "！";
-      }
-      gameLog({ text: message, type: "ACTION" });
-    }
-  }
-};
 
 const handleChopWood = async () => {
   await resources.chopWood();
