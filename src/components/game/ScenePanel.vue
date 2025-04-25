@@ -51,12 +51,10 @@ const selectScene = (scene: Scene) => {
   justify-content: center;
 }
 
-.scene-option {
-  cursor: pointer;
+.scene-option {  cursor: pointer;
   padding: 4px 12px;
   color: #666;
   transition: color 0.3s;
-  -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 

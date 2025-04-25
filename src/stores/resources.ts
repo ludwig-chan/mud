@@ -17,7 +17,7 @@ function useItem(
   }
 }
 
-export type ItemType = 'wood' | 'ore' | 'branch' | 'fruit' | 'seed';
+export type ItemType = 'wood' | 'ore' | 'branch' | 'food' | 'seed';
 export type SubType = 'apple';
 
 export interface BaseItem {
@@ -31,8 +31,8 @@ export interface ResourceItem extends BaseItem {
   type: 'wood' | 'ore' | 'branch';
 }
 
-export interface FruitItem extends BaseItem {
-  type: 'fruit';
+export interface FoodItem extends BaseItem {
+  type: 'food';
   subType: SubType;
 }
 
@@ -45,7 +45,7 @@ export interface State {
   wood: ResourceItem;
   ore: ResourceItem;
   branch: ResourceItem;
-  apple: FruitItem;
+  apple: FoodItem;
   appleSeed: SeedItem;
 }
 
@@ -53,23 +53,17 @@ export const useResourcesStore = defineStore('resources', {
   state: () => ({
     wood: { type: 'wood', count: 0, name: resourceNames.wood } as ResourceItem,
     ore: { type: 'ore', count: 0, name: resourceNames.ore } as ResourceItem,
-    branch: { type: 'branch', count: 0, name: resourceNames.branch } as ResourceItem,
-    apple: {
-      type: 'fruit',
+    branch: { type: 'branch', count: 0, name: resourceNames.branch } as ResourceItem,    apple: {
+      type: 'food',
       subType: 'apple',
       count: 0,
       name: resourceNames.apple,
       use() {
         useItem(this, (character, resources) => {
           character.satiety = Math.min(100, character.satiety + 5);
-
-          // 20%概率获得种子
-          if (Math.random() < 0.2) {
-            resources.appleSeed.count++;
-          }
         });
       }
-    } as FruitItem,
+    } as FoodItem,
     appleSeed: { type: 'seed', subType: 'apple', count: 0, name: resourceNames.appleSeed } as SeedItem
   } as State),
 
