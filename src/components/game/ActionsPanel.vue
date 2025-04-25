@@ -9,7 +9,7 @@
       >
         砍伐
       </ActionButton>
-      <ActionButton :duration="3" @click="handleGatherFruit"> 采集 </ActionButton>
+      <ActionButton :duration="3" @click="handleExplore"> 探索 </ActionButton>
       <ActionButton :duration="3" @click="resources.mineOre"> 采矿 </ActionButton>
       <ActionButton
         :duration="10"
@@ -30,27 +30,34 @@ import { gameLog } from "../../utils/eventBus";
 const resources = useResourcesStore();
 const equipment = useEquipmentStore();
 
-const handleGatherFruit = async () => {
-  const result = await resources.gather();
-  switch (result.type) {
-    case "fruit":
-      if (result.fruit) {
-        // 使用 resources store 中统一定义的物品名称
-        const item = resources.displayableItems.find(item => item.id === result.fruit);
-        if (item) {
-          gameLog({ text: `采集到了一个${item.label}！`, type: "ITEM" });
+const handleExplore = async () => {
+  const findings = await resources.gather();
+  const messages: string[] = [];
+
+  findings.forEach(finding => {
+    switch (finding.type) {
+      case "fruit":
+        if (finding.subType) {
+          const fruitName = resources[finding.subType].name;
+          messages.push(`${fruitName} x${finding.count}`);
         }
-      }
-      break;
-    case "branch":
-      gameLog({ text: "发现了一根结实的树枝！", type: "ITEM" });
-      break;
-    case "ore":
-      gameLog({ text: "在草丛中发现了一块矿石！", type: "ITEM" });
-      break;
+        break;
+      case "branch":
+        messages.push(`树枝 x${finding.count}`);
+        break;
+      case "ore":
+        messages.push(`矿石 x${finding.count}`);
+        break;
+    }
+  });
+
+  if (messages.length > 0) {
+    gameLog({ 
+      text: `探索时发现了：${messages.join('、')}！`, 
+      type: "ITEM" 
+    });
   }
 };
-
 
 const handleChopWood = async () => {
   await resources.chopWood();

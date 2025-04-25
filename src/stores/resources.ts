@@ -18,13 +18,13 @@ function useItem(
 }
 
 export type ItemType = 'wood' | 'ore' | 'branch' | 'fruit' | 'seed';
-export type SubType = 'apple' | 'banana' | 'watermelon' | 'durian';
+export type SubType = 'apple';
 
 export interface BaseItem {
   count: number;
   type: ItemType;
   name: string;
-  use?: () => void;  // 可选的使用方法
+  use?: () => void;
 }
 
 export interface ResourceItem extends BaseItem {
@@ -46,12 +46,7 @@ export interface State {
   ore: ResourceItem;
   branch: ResourceItem;
   apple: FruitItem;
-  banana: FruitItem;
-  watermelon: FruitItem;
-  durian: FruitItem;
   appleSeed: SeedItem;
-  watermelonSeed: SeedItem;
-  durianSeed: SeedItem;
 }
 
 export const useResourcesStore = defineStore('resources', {
@@ -75,52 +70,7 @@ export const useResourcesStore = defineStore('resources', {
         });
       }
     } as FruitItem,
-    banana: {
-      type: 'fruit',
-      subType: 'banana',
-      count: 0,
-      name: resourceNames.banana,
-      use() {
-        useItem(this, (character, resources) => {
-          character.satiety = Math.min(100, character.satiety + 8);
-        });
-      }
-    } as FruitItem,
-    watermelon: {
-      type: 'fruit',
-      subType: 'watermelon',
-      count: 0,
-      name: resourceNames.watermelon,
-      use() {
-        useItem(this, (character, resources) => {
-          character.satiety = Math.min(100, character.satiety + 15);
-
-          // 20%概率获得种子
-          if (Math.random() < 0.2) {
-            resources.watermelonSeed.count++;
-          }
-        });
-      }
-    } as FruitItem,
-    durian: {
-      type: 'fruit',
-      subType: 'durian',
-      count: 0,
-      name: resourceNames.durian,
-      use() {
-        useItem(this, (character, resources) => {
-          character.satiety = Math.min(100, character.satiety + 20);
-
-          // 20%概率获得种子
-          if (Math.random() < 0.2) {
-            resources.durianSeed.count++;
-          }
-        });
-      }
-    } as FruitItem,
-    appleSeed: { type: 'seed', subType: 'apple', count: 0, name: resourceNames.appleSeed } as SeedItem,
-    watermelonSeed: { type: 'seed', subType: 'watermelon', count: 0, name: resourceNames.watermelonSeed } as SeedItem,
-    durianSeed: { type: 'seed', subType: 'durian', count: 0, name: resourceNames.durianSeed } as SeedItem
+    appleSeed: { type: 'seed', subType: 'apple', count: 0, name: resourceNames.appleSeed } as SeedItem
   } as State),
 
   getters: {
@@ -141,21 +91,33 @@ export const useResourcesStore = defineStore('resources', {
     },
 
     async gather() {
-      // 随机决定采集到的物品类型
-      const rand = Math.random();
+      // 定义探索结果数组
+      type Finding = { type: string; count: number } | { type: 'fruit'; subType: SubType; count: number };
+      const findings: Finding[] = [];
+      
+      // 随机决定本次探索发现的物品数量（1-3种）
+      const itemTypes = Math.floor(Math.random() * 3) + 1;
+      
+      for (let i = 0; i < itemTypes; i++) {
+        const rand = Math.random();
+        let finding: Finding;
+        const count = Math.floor(Math.random() * 2) + 1; // 每种物品1-2个
 
-      if (rand < 0.4) { // 40% 概率获得果实
-        const subTypes: SubType[] = ['apple', 'banana', 'watermelon', 'durian'];
-        const randomSubType = subTypes[Math.floor(Math.random() * subTypes.length)];
-        this[randomSubType].count++;
-        return { type: 'fruit', subType: randomSubType };
-      } else if (rand < 0.7) { // 30% 概率获得树枝
-        this.branch.count++;
-        return { type: 'branch' };
-      } else { // 30% 概率获得矿石
-        this.ore.count++;
-        return { type: 'ore' };
+        if (rand < 0.4) { // 40% 概率获得苹果
+          this.apple.count += count;
+          finding = { type: 'fruit', subType: 'apple', count };
+        } else if (rand < 0.7) { // 30% 概率获得树枝
+          this.branch.count += count;
+          finding = { type: 'branch', count };
+        } else { // 30% 概率获得矿石
+          this.ore.count += count;
+          finding = { type: 'ore', count };
+        }
+        
+        findings.push(finding);
       }
+      
+      return findings;
     },
     async mineOre() {
       this.ore.count++;

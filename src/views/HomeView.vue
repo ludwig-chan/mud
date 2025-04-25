@@ -1,11 +1,11 @@
 <template>
-  <main class="game-container">    <header class="header">
+  <main class="game-container">
+    <header class="header">
       <GameDateTime />
       <PlayerStatus />
     </header>
     <div class="middle-section">
-      <InfoPanel />
-      <ActionsPanel />
+      <OperationArea />
     </div>
     <footer class="footer">
       <GameFeed />
@@ -14,11 +14,10 @@
 </template>
 
 <script setup lang="ts">
-import ActionsPanel from '@/components/game/ActionsPanel.vue'
-import InfoPanel from '@/components/game/InfoPanel.vue'
 import GameFeed from '@/components/game/GameFeed.vue'
 import GameDateTime from '@/components/game/GameDateTime.vue'
 import PlayerStatus from '@/components/game/PlayerStatus.vue'
+import OperationArea from '@/components/game/OperationArea.vue'
 </script>
 
 <style scoped>
