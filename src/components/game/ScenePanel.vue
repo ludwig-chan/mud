@@ -54,16 +54,18 @@ const selectScene = (scene: Scene) => {
 .scene-option {
   cursor: pointer;
   padding: 4px 12px;
-  color: #ccc;
+  color: #666;
   transition: color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 .scene-option:hover {
-  color: #fff;
+  color: #000;
 }
 
 .scene-option.active {
-  color: #fff;
+  color: #000;
   font-weight: bold;
 }
 </style>
