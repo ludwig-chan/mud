@@ -33,6 +33,10 @@ import OperationArea from '@/components/game/OperationArea.vue'
 .header {
   flex: 0 0 auto;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .middle-section {

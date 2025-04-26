@@ -5,8 +5,8 @@
         v-for="scene in scenes"
         :key="scene.id"
         class="scene-option"
-        :class="{ active: currentScene === scene.id }"
-        @click="selectScene(scene)"
+        :class="{ active: modelValue === scene.id }"
+        @click="emit('update:modelValue', scene.id)"
       >
         {{ scene.name }}
       </span>
@@ -15,26 +15,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-
-interface Scene {
-  id: string
-  name: string
+export interface Scene {
+  id: string;
+  name: string;
 }
 
-const currentScene = ref('grassland')
+defineProps<{
+  modelValue: string;
+  scenes: Scene[];
+}>();
 
-const scenes: Scene[] = [
-  { id: 'grassland', name: '草原' },
-  { id: 'forest', name: '树林' },
-  { id: 'mountain', name: '山脉' },
-  { id: 'lake', name: '湖泊' }
-]
-
-const selectScene = (scene: Scene) => {
-  currentScene.value = scene.id
-  console.log('选择场景:', scene.name)
-}
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void;
+}>();
 </script>
 
 <style scoped>
