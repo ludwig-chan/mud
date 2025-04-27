@@ -19,7 +19,7 @@ export default defineConfig({
         type: 'module'
       },
       // 自动注册
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       // 基本配置
       manifest: {
         name: 'sunrise',
