@@ -20,6 +20,11 @@ export const useBaseSceneStore = defineStore('baseScene', {
   },
 
   actions: {
+    // 清空场景资源
+    clearResources() {
+      this.scene.resources = []
+    },
+
     async craftAxe() {
       const equipment = useEquipmentStore();
       const branchResource = this.scene.resources.find((r) => r.type === 'branch');

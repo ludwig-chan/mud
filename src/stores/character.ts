@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { gameLog, emitter } from '../utils/eventBus'
 import { showDialog } from '../utils/dialog'
 import { useTimeStore } from './time'
-import { useResourcesStore } from './resources'
+import { useScenesStore } from './scenes'
 
 type Gender = 'male' | 'female'
 
@@ -112,11 +112,9 @@ export const useCharacterStore = defineStore('character', {
       timeStore.$patch({
         timestamp: 0,
         weather: 'SUNNY'
-      })
-
-      // 重置资源
-      const resourceStore = useResourcesStore()
-      resourceStore.$reset()
+      })      // 重置所有场景
+      const scenes = useScenesStore()
+      scenes.resetAllScenes()
 
       // 重置角色状态
       this.$reset()

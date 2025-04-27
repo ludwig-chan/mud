@@ -40,6 +40,15 @@ export const useScenesStore = defineStore('scenes', {
       
       baseScene.initializeScene();
       forestScene.initializeScene();
+    },
+
+    // 重置所有场景资源
+    resetAllScenes() {
+      const baseScene = useBaseSceneStore();
+      const forestScene = useForestSceneStore();
+      
+      baseScene.clearResources();
+      forestScene.clearResources();
     }
   },
 

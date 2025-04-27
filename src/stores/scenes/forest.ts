@@ -19,6 +19,11 @@ export const useForestSceneStore = defineStore('forestScene', {
   },
 
   actions: {
+    // 清空场景资源
+    clearResources() {
+      this.scene.resources = []
+    },
+
     async chopWood() {
       let woodResource = this.scene.resources.find((r) => r.type === 'wood');
       if (!woodResource) {
