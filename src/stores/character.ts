@@ -6,6 +6,14 @@ import { useScenesStore } from './scenes'
 
 type Gender = 'male' | 'female'
 
+interface InventoryItem {
+  id: string;
+  name: string;
+  icon: string;
+  quantity: number;
+  description?: string;
+}
+
 interface CharacterState {
   name: string;
   avatar: string;
@@ -17,6 +25,7 @@ interface CharacterState {
   mood: number;
   hygiene: number;
   mana: number;
+  inventory: InventoryItem[];
 }
 
 export const useCharacterStore = defineStore('character', {
@@ -30,7 +39,8 @@ export const useCharacterStore = defineStore('character', {
     satiety: 50,
     mood: 100,
     hygiene: 100,
-    mana: 0
+    mana: 100,
+    inventory: []
   }),
 
   actions: {
