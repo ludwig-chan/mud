@@ -7,6 +7,8 @@
 </template>
 
 <script setup lang="ts">
+import ResourceList from "./ResourceList.vue";
+
 interface Item {
   id: string;
   name: string;
@@ -14,7 +16,7 @@ interface Item {
 }
 
 defineProps<{
-  items: Item[]
+  items: Item[];
 }>();
 </script>
 
