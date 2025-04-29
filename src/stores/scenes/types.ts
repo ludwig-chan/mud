@@ -2,6 +2,7 @@ export interface GameAction {
   name: string;
   text: string;
   duration: number;
+  energyCost: number; // 新增: 该动作需要消耗的体力值
   handler: () => Promise<void>;
   disabled?: boolean | (() => boolean);
   tooltip?: string;

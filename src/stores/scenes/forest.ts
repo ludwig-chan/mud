@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import type { GameScene, GameResource } from './types';
 import { gameLog } from '../../utils/eventBus';
 import { useEquipmentStore } from '../equipment';
+import { useCharacterStore } from '../character';
 import { 
   type ResourceInfo, 
   getStockAmount, 
@@ -50,9 +51,38 @@ export const useForestSceneStore = defineStore('forestScene', {
     resources: (state) => state.scene.resources,
     actions: (state) => state.scene.actions
   },
+
   actions: {
     clearResources() {
       this.scene.resources = []
+    },
+
+    // 检查体力值是否足够
+    checkEnergy(cost: number): boolean {
+      const character = useCharacterStore();
+      if (character.energy < cost) {
+        gameLog({ 
+          text: "你太累了,需要休息一下...",
+          type: "SYSTEM" 
+        });
+        return false;
+      }
+      return true;
+    },
+
+    // 消耗体力值
+    consumeEnergy(cost: number) {
+      const character = useCharacterStore();
+      character.energy = Math.max(0, character.energy - cost);
+    },
+
+    // 为动作添加体力值消耗的包装器函数
+    async withEnergyCost(cost: number, action: () => Promise<void>): Promise<void> {
+      if (!this.checkEnergy(cost)) {
+        return;
+      }
+      await action();
+      this.consumeEnergy(cost);
     },
 
     async chopWood() {
@@ -134,7 +164,8 @@ export const useForestSceneStore = defineStore('forestScene', {
           name: 'chopWood',
           text: '砍伐',
           duration: 5,
-          handler: async () => await this.chopWood(),
+          energyCost: 15, // 砍树需要较多体力
+          handler: async () => await this.withEnergyCost(15, async () => await this.chopWood()),
           disabled: equipment.axeCount === 0,
           tooltip: '需要斧头才能砍伐'
         },
@@ -142,16 +173,19 @@ export const useForestSceneStore = defineStore('forestScene', {
           name: 'explore',
           text: '探索',
           duration: 3,
-          handler: async () => await this.explore()
+          energyCost: 10, // 探索消耗中等体力
+          handler: async () => await this.withEnergyCost(10, async () => await this.explore())
         },
         {
           name: 'mineOre',
           text: '采矿',
           duration: 3,
-          handler: async () => await this.mineOre()
+          energyCost: 20, // 采矿需要大量体力
+          handler: async () => await this.withEnergyCost(20, async () => await this.mineOre())
         }
       ];
     },
+
     initializeScene() {
       this.scene.actions = this.getActionConfig();
 
