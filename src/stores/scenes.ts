@@ -42,13 +42,13 @@ export const useScenesStore = defineStore('scenes', {
       forestScene.initializeScene();
     },
 
-    // 重置所有场景资源
+    // 重置所有场景
     resetAllScenes() {
       const baseScene = useBaseSceneStore();
       const forestScene = useForestSceneStore();
       
-      baseScene.clearResources();
-      forestScene.clearResources();
+      baseScene.reset();
+      forestScene.reset();
     }
   },
 

@@ -3,6 +3,7 @@ import { gameLog, emitter } from '../utils/eventBus'
 import { showDialog } from '../utils/dialog'
 import { useTimeStore } from './time'
 import { useScenesStore } from './scenes'
+import { restartGame } from '../utils/gameSystem'
 
 type Gender = 'male' | 'female'
 
@@ -111,32 +112,13 @@ export const useCharacterStore = defineStore('character', {
       })
 
       if (result === 'restart') {
-        await this.restartGame()
+        await restartGame()
       }
     },
 
     // 重置游戏
     async restartGame() {
-      // 重置时间
-      const timeStore = useTimeStore()
-      timeStore.$patch({
-        timestamp: 0,
-        weather: 'SUNNY'
-      })      // 重置所有场景
-      const scenes = useScenesStore()
-      scenes.resetAllScenes()
-
-      // 重置角色状态
-      this.$reset()
-
-      // 清空游戏消息
-      emitter.emit('clear-messages')
-
-      // 发送游戏重启消息
-      gameLog({
-        text: '新的一天开始了...',
-        type: 'SYSTEM'
-      })
+      await restartGame()
     }
   },
   

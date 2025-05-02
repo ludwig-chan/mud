@@ -5,13 +5,30 @@ import { gameLog } from '../../utils/eventBus';
 import { useEquipmentStore } from '../equipment';
 import { useCharacterStore } from '../character';
 
+// 定义基地初始库存
+const INITIAL_STOCK = {
+  wood: {
+    current: 0,
+    max: 100
+  },
+  ore: {
+    current: 0,
+    max: 100
+  },
+  branch: {
+    current: 0,
+    max: 100
+  }
+} as const;
+
 export const useBaseSceneStore = defineStore('baseScene', {
   state: () => ({
     scene: {
       id: 'base',
       name: '基地',
       resources: [],
-      actions: []
+      actions: [],
+      stock: JSON.parse(JSON.stringify(INITIAL_STOCK))
     } as GameScene
   }),
 
@@ -21,9 +38,13 @@ export const useBaseSceneStore = defineStore('baseScene', {
   },
 
   actions: {
-    // 清空场景资源
-    clearResources() {
+    // 重置场景状态
+    reset() {
+      // 清空已收集的资源
       this.scene.resources = []
+      
+      // 重置库存到初始状态
+      this.scene.stock = JSON.parse(JSON.stringify(INITIAL_STOCK))
     },
 
     // 检查体力值是否足够

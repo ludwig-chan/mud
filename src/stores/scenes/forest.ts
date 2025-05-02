@@ -53,8 +53,12 @@ export const useForestSceneStore = defineStore('forestScene', {
   },
 
   actions: {
-    clearResources() {
+    reset() {
+      // 清空已收集的资源
       this.scene.resources = []
+      
+      // 重置库存到初始状态
+      this.scene.stock = JSON.parse(JSON.stringify(INITIAL_STOCK))
     },
 
     // 检查体力值是否足够
