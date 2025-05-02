@@ -1,5 +1,5 @@
 <template>
-  <div class="player-status" @click="goToCharacterView">
+  <div class="player-status translucent-white" @click="goToCharacterView">
     <div class="avatar-section">
       <div class="avatar">
         <div class="avatar-placeholder">
@@ -52,7 +52,6 @@ onUnmounted(() => {
 
 <style scoped>
 .player-status {
-  background-color: #f5f5f5;
   padding: 0.6rem;  /* 减小内边距 */
   border-radius: 6px;
   display: grid;

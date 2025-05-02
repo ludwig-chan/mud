@@ -1,5 +1,5 @@
 <template>
-  <div class="scene-panel">
+  <div class="scene-panel translucent-white">
     <div class="scene-options">
       <span
         v-for="scene in scenes"
@@ -58,5 +58,9 @@ const emit = defineEmits<{
 .scene-option.active {
   color: #000;
   font-weight: bold;
+}
+
+.translucent-white {
+  background-color: rgba(255, 255, 255, 0.7);
 }
 </style>

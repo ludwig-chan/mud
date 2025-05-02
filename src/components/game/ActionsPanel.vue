@@ -1,5 +1,5 @@
 <template>
-  <section class="actions-panel">
+  <section class="actions-panel translucent-white">
     <div class="action-buttons">
       <ActionButton
         v-for="action in actions"
@@ -67,8 +67,8 @@ function getActionTooltip(action: Action): TooltipData {
 
 <style scoped>
 .actions-panel {
-  background-color: #f5f5f5;
   border-radius: 8px;
+  flex: 1;
 }
 
 .action-buttons {

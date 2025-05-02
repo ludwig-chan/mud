@@ -1,5 +1,5 @@
 <template>
-  <section class="info-panel">
+  <section class="info-panel translucent-white">
     <div class="inventory">
       <ResourceList :items="items" />
     </div>
@@ -22,7 +22,6 @@ defineProps<{
 
 <style scoped>
 .info-panel {
-  background-color: #f5f5f5;
   border-radius: 8px;
   flex: 1;
 }

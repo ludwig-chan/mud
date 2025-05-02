@@ -43,3 +43,8 @@ a,
   -ms-user-select: text;
   user-select: text;
 }
+
+/* 通用半透明白色背景样式 */
+.translucent-white {
+  background-color: rgba(255, 255, 255, 0.75) !important;
+}
