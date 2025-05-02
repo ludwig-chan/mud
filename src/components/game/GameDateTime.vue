@@ -95,113 +95,16 @@ function isInPeriod(hour: number, period: TimePeriod) {
   }
 }
 
-type WeatherProbabilities = Record<Weather, number>
-type SeasonalWeatherProbabilities = Record<Season, WeatherProbabilities>
-
-// 每个季节的天气概率配置
-const seasonalWeatherProbabilities: SeasonalWeatherProbabilities = {
-  'SPRING': {
-    'SUNNY': 0.3,
-    'RAINY': 0.3,
-    'WINDY': 0.2,
-    'SNOWY': 0.05,
-    'HAIL': 0.05,
-    'SANDSTORM': 0.05,
-    'HAZE': 0.05
-  },
-  'SUMMER': {
-    'SUNNY': 0.4,
-    'RAINY': 0.3,
-    'WINDY': 0.1,
-    'SNOWY': 0,
-    'HAIL': 0.1,
-    'SANDSTORM': 0.05,
-    'HAZE': 0.05
-  },
-  'AUTUMN': {
-    'SUNNY': 0.4,
-    'RAINY': 0.2,
-    'WINDY': 0.2,
-    'SNOWY': 0.05,
-    'HAIL': 0.05,
-    'SANDSTORM': 0.05,
-    'HAZE': 0.05
-  },
-  'WINTER': {
-    'SUNNY': 0.2,
-    'RAINY': 0.1,
-    'WINDY': 0.2,
-    'SNOWY': 0.3,
-    'HAIL': 0.1,
-    'SANDSTORM': 0.05,
-    'HAZE': 0.05
-  }
-}
-
-// 根据季节随机生成天气
-function generateWeather(currentSeason: Season): Weather {
-  const probabilities = seasonalWeatherProbabilities[currentSeason]
-  const random = Math.random()
-  let cumulativeProbability = 0
-
-  for (const [weatherType, probability] of Object.entries(probabilities)) {
-    cumulativeProbability += probability
-    if (random < cumulativeProbability) {
-      return weatherType as Weather
-    }
-  }
-
-  return 'SUNNY'
-}
-
-// 自动时间推进
-let timeInterval: ReturnType<typeof setInterval> | null = null
+// 移除天气相关代码,已移至 time store
 
 onMounted(() => {
-  // 每10秒推进一小时
-  timeInterval = setInterval(() => {
-    // 更新时间戳
-    timeStore.$patch(state => {
-      state.timestamp++
-    })
-
-    // 触发每小时事件
-    emitter.emit('hour-passed')
-
-    // 检查年份变化
-    timeStore.checkYearChange()
-
-    // 20%的概率改变天气
-    if (Math.random() < 0.2) {
-      const newWeather = generateWeather(timeStore.season as Season)
-      const oldWeather = timeStore.weather
-      // 只有在天气真的发生变化时才发送消息
-      if (newWeather !== oldWeather) {
-        timeStore.updateWeather(newWeather)
-        // 根据新天气生成简洁的提示
-        let weatherMessage = ''
-        switch (newWeather) {
-          case 'SUNNY': weatherMessage = '天晴了'; break
-          case 'RAINY': weatherMessage = '下雨了'; break
-          case 'WINDY': weatherMessage = '起风了'; break
-          case 'SNOWY': weatherMessage = '下雪了'; break
-          case 'HAIL': weatherMessage = '下冰雹了'; break
-          case 'SANDSTORM': weatherMessage = '沙尘暴来了'; break
-          case 'HAZE': weatherMessage = '起雾了'; break
-        }
-        gameLog({
-          text: weatherMessage,
-          type: 'SYSTEM'
-        })
-      }
-    }
-  }, 10000) // 改为10秒
+  // 开始时间推进
+  timeStore.startTime()
 })
 
 onUnmounted(() => {
-  if (timeInterval) {
-    clearInterval(timeInterval)
-  }
+  // 停止时间推进
+  timeStore.stopTime()
 })
 </script>
 

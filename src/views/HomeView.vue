@@ -14,10 +14,24 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
+import { useTimeStore } from '@/stores/time'
 import GameFeed from '@/components/game/GameFeed.vue'
 import GameDateTime from '@/components/game/GameDateTime.vue'
 import PlayerStatus from '@/components/game/PlayerStatus.vue'
 import OperationArea from '@/components/game/OperationArea.vue'
+
+const timeStore = useTimeStore()
+
+// 当进入游戏页面时启动时间系统
+onMounted(() => {
+  timeStore.startTime()
+})
+
+// 当离开游戏页面时停止时间系统
+onUnmounted(() => {
+  timeStore.stopTime()
+})
 </script>
 
 <style scoped>
