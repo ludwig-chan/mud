@@ -4,6 +4,8 @@ import type { GameScene } from './types';
 import { gameLog } from '../../utils/eventBus';
 import { useEquipmentStore } from '../equipment';
 import { useCharacterStore } from '../character';
+import { useScenesStore } from '../scenes';
+import { getOrCreateResource } from '../../utils/resourceUtils';
 
 // 定义基地初始库存
 const INITIAL_STOCK = {
@@ -28,6 +30,7 @@ export const useBaseSceneStore = defineStore('baseScene', {
       name: '基地',
       resources: [],
       actions: [],
+      buildings: [],
       stock: JSON.parse(JSON.stringify(INITIAL_STOCK))
     } as GameScene
   }),
@@ -42,7 +45,10 @@ export const useBaseSceneStore = defineStore('baseScene', {
     reset() {
       // 清空已收集的资源
       this.scene.resources = []
-      
+
+      // 重置建筑
+      this.scene.buildings = []
+
       // 重置库存到初始状态
       this.scene.stock = JSON.parse(JSON.stringify(INITIAL_STOCK))
     },
@@ -51,9 +57,9 @@ export const useBaseSceneStore = defineStore('baseScene', {
     checkEnergy(cost: number): boolean {
       const character = useCharacterStore();
       if (character.energy < cost) {
-        gameLog({ 
+        gameLog({
           text: "你太累了,需要休息一下...",
-          type: "SYSTEM" 
+          type: "SYSTEM"
         });
         return false;
       }
@@ -75,42 +81,63 @@ export const useBaseSceneStore = defineStore('baseScene', {
       this.consumeEnergy(cost);
     },
 
-    async craftAxe() {
-      const equipment = useEquipmentStore();
-      const branchResource = this.scene.resources.find((r) => r.type === 'branch');
-      const oreResource = this.scene.resources.find((r) => r.type === 'ore');
+    // 探索周边
+    async exploreSurroundings() {
+      const scenes = useScenesStore();
 
-      if (!branchResource || !oreResource) {
-        gameLog({ text: "资源类型错误", type: "SYSTEM" });
-        return;
+      // 随机事件和发现的处理
+      const eventRoll = Math.random();
+
+      // 30%概率发现资源
+      if (eventRoll < 0.3) {
+        const resources = ['branch', 'ore'];
+        const resourceType = resources[Math.floor(Math.random() * resources.length)];
+        const amount = Math.floor(Math.random() * 2) + 1; // 1-2个
+
+        const resource = getOrCreateResource(this.scene.resources, {
+          id: resourceType,
+          type: resourceType,
+          name: resourceType === 'branch' ? '树枝' : '矿石'
+        });
+        resource.count += amount;
+
+        gameLog({
+          text: `在附近发现了${amount}个${resource.name}！`,
+          type: "ITEM"
+        });
       }
-
-      if (branchResource.count >= 3 && oreResource.count >= 2) {
-        branchResource.count -= 3;
-        oreResource.count -= 2;
-        equipment.craftAxe({ branch: 3, ore: 2 });
-        gameLog({ text: "成功打造了一把斧头！", type: "ITEM" });
-      } else {
-        gameLog({ text: "资源不足，无法打造斧头", type: "SYSTEM" });
+      // 20%概率发现树林(如果还没解锁的话)
+      else if (eventRoll < 0.5 && !scenes.unlockedScenes.includes('forest')) {
+        scenes.unlockScene('forest');
+        gameLog({
+          text: "在远处发现了一片茂密的树林，看起来那里会有不少资源...",
+          type: "SYSTEM"
+        });
       }
-    },
-
-    getActionConfig() {
+      // 50%概率什么都没发现
+      else {
+        const messages = [
+          "四周很安静，什么特别的都没有发现。",
+          "在附近转了转，风景不错。",
+          "周围一切如常。",
+          "这个地方好像已经很熟悉了。"
+        ];
+        gameLog({
+          text: messages[Math.floor(Math.random() * messages.length)],
+          type: "SYSTEM"
+        });
+      }
+    },    getActionConfig() {
       const equipment = useEquipmentStore();
-      return [{
-        name: 'craftAxe',
-        text: '打造斧头',
-        duration: 10,
-        energyCost: 25, // 制作工具需要大量体力
-        handler: async () => await this.withEnergyCost(25, async () => await this.craftAxe()),
-        disabled: () => {
-          const store = useBaseSceneStore();
-          const branchResource = store.scene.resources.find((r) => r.type === 'branch');
-          const oreResource = store.scene.resources.find((r) => r.type === 'ore');
-          return !branchResource || !oreResource || branchResource.count < 3 || oreResource.count < 2;
-        },
-        tooltip: '需要：树枝x3 矿石x2'
-      }];
+      return [
+        {
+          name: 'exploreSurroundings',
+          text: '探索周边',
+          duration: 5,
+          energyCost: 10,
+          handler: async () => await this.withEnergyCost(10, async () => await this.exploreSurroundings())
+        }
+      ];
     },
 
     initializeScene() {

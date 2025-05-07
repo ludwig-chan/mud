@@ -69,6 +69,8 @@ function getActionTooltip(action: Action): TooltipData {
 .actions-panel {
   border-radius: 8px;
   flex: 1;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .action-buttons {

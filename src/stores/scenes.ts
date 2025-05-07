@@ -6,7 +6,8 @@ import type { GameScene } from './scenes/types';
 
 export const useScenesStore = defineStore('scenes', {
   state: () => ({
-    currentSceneId: 'base'
+    currentSceneId: 'base',
+    unlockedScenes: ['base'] as string[] // 初始只解锁基地场景
   }),
 
   getters: {
@@ -32,7 +33,6 @@ export const useScenesStore = defineStore('scenes', {
       return this.currentScene.actions;
     }
   },
-
   actions: {
     initializeScenes() {
       const baseScene = useBaseSceneStore();
@@ -49,6 +49,16 @@ export const useScenesStore = defineStore('scenes', {
       
       baseScene.reset();
       forestScene.reset();
+      
+      // 重置解锁状态，只保留基地场景
+      this.unlockedScenes = ['base'];
+    },
+
+    // 解锁新场景
+    unlockScene(sceneId: string) {
+      if (!this.unlockedScenes.includes(sceneId)) {
+        this.unlockedScenes.push(sceneId);
+      }
     }
   },
 

@@ -16,11 +16,18 @@ export interface GameResource {
   maxCount?: number;
 }
 
+export interface GameBuilding {
+  name: string;
+  type: string;
+  level: number;
+}
+
 export interface GameScene {
   id: string;
   name: string;
   actions: GameAction[];
   resources: GameResource[];
+  buildings: GameBuilding[];
   // 场景库存,记录场景中资源的当前数量和最大数量
   stock: {
     [key: string]: {
