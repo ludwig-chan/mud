@@ -1,8 +1,5 @@
 <template>
   <div class="background-layer" :class="backgroundClass">
-    <div class="celestial-body" :class="{ 'fade-in': shouldShow }">
-      {{ currentEmoji }} {{ weatherEmoji }}
-    </div>
   </div>
 </template>
 
@@ -25,37 +22,6 @@ const backgroundClass = computed(() => {
     [`weather-${weather.toLowerCase()}`]: true
   }
 })
-
-// 根据时段选择显示的主要天体 emoji
-const currentEmoji = computed(() => {
-  const period = timeStore.currentPeriod
-  switch (period) {
-    case 'DAY': return '☀️'
-    case 'NIGHT': return '🌙'
-    default: return ''
-  }
-})
-
-// 根据天气显示额外的 emoji
-const weatherEmoji = computed(() => {
-  switch (timeStore.weather) {
-    case 'RAINY': return '🌧️'
-    case 'WINDY': return '💨'
-    case 'SNOWY': return '❄️'
-    case 'HAIL': return '🌨️'
-    case 'SANDSTORM': return '🌪️'
-    case 'HAZE': return '🌫️'
-    case 'SUNNY': 
-      // 如果是晴天，只显示太阳/月亮即可，不需要额外emoji
-      return ''
-    default: return ''
-  }
-})
-
-// 只在白天和夜晚显示天体
-const shouldShow = computed(() => 
-  timeStore.currentPeriod === 'DAY' || timeStore.currentPeriod === 'NIGHT'
-)
 </script>
 
 <style scoped>
@@ -67,23 +33,6 @@ const shouldShow = computed(() =>
   height: 100%;
   z-index: -1;
   transition: all 1s ease-in-out;
-}
-
-.celestial-body {
-  position: absolute;
-  top: 15%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-20px);
-  font-size: 4rem;
-  opacity: 0;
-  transition: all 1s ease-in-out;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.celestial-body.fade-in {
-  opacity: 0.8;
-  transform: translateX(-50%) translateY(0);
 }
 
 /* 时段样式 */
