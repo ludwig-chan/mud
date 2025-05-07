@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import type { GameScene, GameResource } from './types';
-import { gameLog } from '../../utils/eventBus';
 import { useEquipmentStore } from '../equipment';
 import { useCharacterStore } from '../character';
 import { 
@@ -10,6 +9,7 @@ import {
   getOrCreateResource, 
   calculateExploreResources 
 } from '../../utils/resourceUtils';
+import { toast } from '../../utils/toast';
 
 const INITIAL_STOCK = {
   wood: {
@@ -65,9 +65,9 @@ export const useForestSceneStore = defineStore('forestScene', {
     checkEnergy(cost: number): boolean {
       const character = useCharacterStore();
       if (character.energy < cost) {
-        gameLog({ 
-          text: "你太累了,需要休息一下...",
-          type: "SYSTEM" 
+        toast({ 
+          message: "你太累了,需要休息一下...",
+          type: "warning"
         });
         return false;
       }
@@ -98,14 +98,23 @@ export const useForestSceneStore = defineStore('forestScene', {
           name: '木材'
         });
         woodResource.count++;
-        gameLog({ text: "获得了一个木材", type: "ITEM" });
+        toast({ 
+          message: "获得了一个木材", 
+          type: "success" 
+        });
 
         // 如果库存耗尽，发出提示
         if (!hasStock(this.scene.stock, 'wood')) {
-          gameLog({ text: "这片区域的树木已经被砍伐殆尽了", type: "SYSTEM" });
+          toast({ 
+            message: "这片区域的树木已经被砍伐殆尽了", 
+            type: "warning" 
+          });
         }
       } catch (error) {
-        gameLog({ text: "这里已经没有可以砍伐的树木了", type: "SYSTEM" });
+        toast({ 
+          message: "这里已经没有可以砍伐的树木了", 
+          type: "error" 
+        });
       }
     },
 
@@ -114,7 +123,10 @@ export const useForestSceneStore = defineStore('forestScene', {
       const selectedResources = calculateExploreResources(this.scene.stock, FOREST_RESOURCES);
 
       if (selectedResources.length === 0) {
-        gameLog({ text: "探索了一圈，但是什么都没有发现", type: "ITEM" });
+        toast({ 
+          message: "探索了一圈，但是什么都没有发现", 
+          type: "info" 
+        });
         return;
       }
 
@@ -136,11 +148,17 @@ export const useForestSceneStore = defineStore('forestScene', {
       }
 
       if (gainedResources.length === 0) {
-        gameLog({ text: "探索了一圈，但是什么都没有发现", type: "ITEM" });
+        toast({ 
+          message: "探索了一圈，但是什么都没有发现", 
+          type: "info" 
+        });
         return;
       }
       const resourcesText = gainedResources.join('、');
-      gameLog({ text: `探索发现了${resourcesText}`, type: "ITEM" });
+      toast({ 
+        message: `探索发现了${resourcesText}`, 
+        type: "success" 
+      });
     },
 
     async mineOre() {
@@ -152,12 +170,21 @@ export const useForestSceneStore = defineStore('forestScene', {
           name: '矿石'
         });
         oreResource.count++;
-        gameLog({ text: "获得了一块矿石", type: "ITEM" });        // 如果库存耗尽，发出提示
+        toast({ 
+          message: "获得了一块矿石", 
+          type: "success" 
+        });        // 如果库存耗尽，发出提示
         if (!hasStock(this.scene.stock, 'ore')) {
-          gameLog({ text: "这片区域的矿石已经被开采殆尽了", type: "SYSTEM" });
+          toast({ 
+            message: "这片区域的矿石已经被开采殆尽了", 
+            type: "warning" 
+          });
         }
       } catch (error) {
-        gameLog({ text: "这里已经没有可以开采的矿石了", type: "SYSTEM" });
+        toast({ 
+          message: "这里已经没有可以开采的矿石了", 
+          type: "error" 
+        });
       }
     },
 

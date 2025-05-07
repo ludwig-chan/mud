@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import type { GameScene } from './types';
-import { gameLog } from '../../utils/eventBus';
 import { useEquipmentStore } from '../equipment';
 import { useCharacterStore } from '../character';
 import { useScenesStore } from '../scenes';
 import { getOrCreateResource } from '../../utils/resourceUtils';
+import { toast } from '../../utils/toast';
 
 // 定义基地初始库存
 const INITIAL_STOCK = {
@@ -57,9 +57,9 @@ export const useBaseSceneStore = defineStore('baseScene', {
     checkEnergy(cost: number): boolean {
       const character = useCharacterStore();
       if (character.energy < cost) {
-        gameLog({
-          text: "你太累了,需要休息一下...",
-          type: "SYSTEM"
+        toast({
+          message: "你太累了,需要休息一下...",
+          type: "warning"
         });
         return false;
       }
@@ -79,10 +79,8 @@ export const useBaseSceneStore = defineStore('baseScene', {
       }
       await action();
       this.consumeEnergy(cost);
-    },
-
-    // 探索周边
-    async exploreSurroundings() {
+    },    // 探索
+    async explore() {
       const scenes = useScenesStore();
 
       // 随机事件和发现的处理
@@ -101,17 +99,19 @@ export const useBaseSceneStore = defineStore('baseScene', {
         });
         resource.count += amount;
 
-        gameLog({
-          text: `在附近发现了${amount}个${resource.name}！`,
-          type: "ITEM"
+        const message = `在附近发现了${amount}个${resource.name}！`;
+        toast({
+          message,
+          type: 'success'
         });
       }
       // 20%概率发现树林(如果还没解锁的话)
       else if (eventRoll < 0.5 && !scenes.unlockedScenes.includes('forest')) {
         scenes.unlockScene('forest');
-        gameLog({
-          text: "在远处发现了一片茂密的树林，看起来那里会有不少资源...",
-          type: "SYSTEM"
+        const message = "在远处发现了一片茂密的树林，看起来那里会有不少资源...";
+        toast({
+          message,
+          type: 'info'
         });
       }
       // 50%概率什么都没发现
@@ -122,20 +122,22 @@ export const useBaseSceneStore = defineStore('baseScene', {
           "周围一切如常。",
           "这个地方好像已经很熟悉了。"
         ];
-        gameLog({
-          text: messages[Math.floor(Math.random() * messages.length)],
-          type: "SYSTEM"
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        toast({
+          message,
+          type: 'info'
         });
       }
-    },    getActionConfig() {
+    },
+    getActionConfig() {
       const equipment = useEquipmentStore();
       return [
         {
-          name: 'exploreSurroundings',
-          text: '探索周边',
+          name: 'explore',
+          text: '探索',
           duration: 5,
           energyCost: 10,
-          handler: async () => await this.withEnergyCost(10, async () => await this.exploreSurroundings())
+          handler: async () => await this.withEnergyCost(10, async () => await this.explore())
         }
       ];
     },
