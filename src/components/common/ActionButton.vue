@@ -42,6 +42,7 @@ const props = defineProps<{
   duration?: number;
   disabled?: boolean;
   tooltip?: TooltipContent;
+  beforeClick?: () => boolean;
 }>(); 
 
 const emit = defineEmits<{
@@ -59,6 +60,10 @@ const { handleTouchStart, handleTouchEnd } = useTouchEvents({
   onDoubleTouch: cancelCountdown,
   onSingleTouch: () => {
     if (!isCountingDown.value) {
+      // 在单触事件中也添加 beforeClick 检查
+      if (props.beforeClick && !props.beforeClick()) {
+        return;
+      }
       startCountdown(() => emit('click'));
     }
   }
@@ -69,6 +74,14 @@ const handleClick = () => {
     cancelCountdown();
     return;
   }
+  
+  // 如果提供了 beforeClick 函数，先执行它检查是否可以继续
+  if (props.beforeClick) {
+    if (!props.beforeClick()) {
+      return;
+    }
+  }
+  
   startCountdown(() => emit('click'));
 };
 
